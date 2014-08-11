@@ -87,8 +87,11 @@ describe('User use case', function() {
   var resourceName = 'users';
   var baseUrl = 'http://coolapp.com/api/v1/';
   var collectionUrl = baseUrl + resourceName;
-  var userCollectionData = Array.apply(null, new Array(25)).map(randomUserData);
-  var knownUserData = userCollectionData[0];
+  var userCollectionData = {
+    _items: Array.apply(null, new Array(25)).map(randomUserData),
+    _meta: { total: 73, page: 1, max_results: 25 }
+  };
+  var knownUserData = userCollectionData._items[0];
   var knownUserUrl = collectionUrl + '/' + knownUserData._id;
   var $httpBackend;
   var MyAPICollection;
@@ -108,6 +111,12 @@ describe('User use case', function() {
 
       }
       ResourceCollection.collectionInit(MyAPICollection);
+      MyAPICollection._itemsField = '_items';
+      MyAPICollection._metaField = '_meta';
+
+      MyAPICollection.prototype.hasNext = function() {
+        return this._meta.page * this._meta.max_results < this._meta.total;
+      };
 
       return MyAPICollection;
     });
@@ -146,10 +155,10 @@ describe('User use case', function() {
 
     $httpBackend.whenGET(new RegExp(escCollectionUrl + '(\\?.*)?$')).
         respond(function() {
-          return [200, JSON.stringify([userCollectionData]), {}, 'OK'];
+          return [200, JSON.stringify(userCollectionData), {}, 'OK'];
         });
 
-    angular.forEach(userCollectionData, function(userData) {
+    angular.forEach(userCollectionData._items, function(userData) {
       $httpBackend.whenGET(new RegExp(escCollectionUrl + '\/' + userData._id +
           '(\\?.*)?$'))
           .respond(function() {
@@ -206,7 +215,7 @@ describe('User use case', function() {
         expect(promise).toBeSuccessErrorPromise();
         promise.then(function(collection) {
           expect(collection instanceof MyAPICollection).toEqual(true);
-          expect(collection.length).toBeGreaterThan(0);
+          expect(collection.length).toEqual(25);
           angular.forEach(collection, function(user) {
             expect(user instanceof User).toEqual(true);
             expect(user.fullName).not.toBeUndefined();
