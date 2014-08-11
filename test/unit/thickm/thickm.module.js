@@ -1,23 +1,27 @@
 'use strict';
 
-// Set the jasmine fixture path
-// jasmine.getFixtures().fixturesPath = 'base/';
-
 describe('', function() {
 
-    var module;
-    var dependencies;
-    dependencies = [];
+  var module;
+  var dependencies;
+  dependencies = [];
 
-    beforeEach(function() {
+  var hasModule = function(module) {
+    return dependencies.indexOf(module) >= 0;
+  };
 
-        // Get module
-        module = angular.module('thickm');
-        dependencies = module.requires;
-    });
+  beforeEach(function() {
 
-    it('should have no dependencies', function() {
-        expect(dependencies.length).toEqual(0);
-    });
+    // Get module
+    module = angular.module('thickm');
+    dependencies = module.requires;
+  });
 
+  it('should load resource module', function() {
+    expect(hasModule('thickm.resource')).toBeTruthy();
+  });
+
+  it('should load collection module', function() {
+    expect(hasModule('thickm.collection')).toBeTruthy();
+  });
 });
