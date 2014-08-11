@@ -27,7 +27,7 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q) {
+  this.$get = function($http, $q, ResourceCollection, Util) {
     function resourceFactory(resourceName) {
 
       var resourceUrl = provider.baseUrl + resourceName;
@@ -49,10 +49,11 @@ angular.module('thickm.resource')
       };
 
       Resource.transformCollectionResponse = function(response) {
-        var Self = this;
-        return response.data.map(function(item) {
-          return Self.build(item);
-        });
+        return ResourceCollection.build(this, response);
+        // var Self = this;
+        // return response.data.map(function(item) {
+        //   return Self.build(item);
+        // });
       };
 
       Resource.transformItemResponse = function(response) {
@@ -122,16 +123,9 @@ angular.module('thickm.resource')
 
     resourceFactory.baseUrl = provider.baseUrl;
 
-    resourceFactory.extend = function(subclass, superclass) {
-      var Tmp = function() {};
-      Tmp.prototype = superclass.prototype;
-      subclass.prototype = new Tmp();
-      subclass.prototype.constructor = subclass;
-    };
-
     resourceFactory.resourceInit = function(subclass, resourceName) {
       var Resource = resourceFactory(resourceName);
-      resourceFactory.extend(subclass, Resource);
+      Util.extend(subclass, Resource);
       angular.extend(subclass, Resource);
     };
 

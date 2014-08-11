@@ -91,6 +91,7 @@ describe('User use case', function() {
   var knownUserData = userCollectionData[0];
   var knownUserUrl = collectionUrl + '/' + knownUserData._id;
   var $httpBackend;
+  var ResourceCollection;
 
   // Set up the module to test
   beforeEach(function() {
@@ -135,12 +136,6 @@ describe('User use case', function() {
     $httpBackend = _$httpBackend_;
 
     var escCollectionUrl = collectionUrl.replace(/[\/]/g, '\\/');
-    // var regex = new RegExp(escCollectionUrl + '(\\?.*)?$');
-    //
-    // console.log(
-    //   regex.test('http://coolapp.com/api/v1/users?sort=%5B%5B%22partnumber%22,1%5D%5D'),
-    //   regex.test('http://coolapp.com/api/v1/users'),
-    //   regex.test('http://coolapp.com/api/v1/users/1'));
 
     $httpBackend.whenGET(new RegExp(escCollectionUrl + '(\\?.*)?$')).
         respond(function() {
@@ -170,6 +165,10 @@ describe('User use case', function() {
         });
   }));
 
+  beforeEach(inject(function(_ResourceCollection_) {
+    ResourceCollection = _ResourceCollection_;
+  }));
+
   describe('User class', function() {
     var User;
     beforeEach(inject(function(_User_) {
@@ -194,14 +193,14 @@ describe('User use case', function() {
         $httpBackend.flush();
       });
 
-      it('should return an array of user instances', function() {
+      it('should return a ResourceCollection with User instances', function() {
         $httpBackend.expectGET(collectionUrl);
         var promise = User.query();
         expect(promise).toBeSuccessErrorPromise();
-        promise.then(function(users) {
-          expect(angular.isArray(users)).toEqual(true);
-          expect(users.length).toBeGreaterThan(0);
-          angular.forEach(users, function(user) {
+        promise.then(function(collection) {
+          expect(collection instanceof ResourceCollection).toEqual(true);
+          expect(collection.length).toBeGreaterThan(0);
+          angular.forEach(collection, function(user) {
             expect(user instanceof User).toEqual(true);
             expect(user.fullName).not.toBeUndefined();
           });

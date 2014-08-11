@@ -1,19 +1,26 @@
 'use strict';
 
 angular.module('thickm.collection')
-.factory('ResourceCollection', function resourceCollectionFactory() {
-
-  function extend(subclass, superclass) {
-    var Tmp = function() {};
-    Tmp.prototype = superclass.prototype;
-    subclass.prototype = new Tmp();
-    subclass.prototype.constructor = subclass;
-  }
+.factory('ResourceCollection', function resourceCollectionFactory(Util) {
 
   function ResourceCollection() {
-
+    Array.apply(this, arguments);
   }
-  extend(ResourceCollection, Array);
+  Util.extend(ResourceCollection, Array);
+
+  ResourceCollection.build = function(cls, response) {
+    var rc = new this();
+
+    var array = response.data.map(function(item) {
+      return cls.build(item);
+    });
+
+    angular.forEach(array, function(resource) {
+      rc.push(resource);
+    });
+
+    return rc;
+  };
 
   return ResourceCollection;
 

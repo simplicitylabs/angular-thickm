@@ -21,4 +21,8 @@ describe('', function() {
     expect(hasModule('thickm.collection')).toBeTruthy();
   });
 
+  it('should load util module', function() {
+    expect(hasModule('thickm.util')).toBeTruthy();
+  });
+
 });
