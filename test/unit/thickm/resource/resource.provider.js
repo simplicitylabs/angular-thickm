@@ -91,26 +91,36 @@ describe('User use case', function() {
   var knownUserData = userCollectionData[0];
   var knownUserUrl = collectionUrl + '/' + knownUserData._id;
   var $httpBackend;
-  var ResourceCollection;
+  var MyAPICollection;
 
   // Set up the module to test
   beforeEach(function() {
-    var usersModule = angular.module('users', ['thickm.resource']);
+    var usersModule = angular.module('users', ['thickm']);
 
     // Config sep
     usersModule.config(function(resourceFactoryProvider) {
       resourceFactoryProvider.setBaseUrl(baseUrl);
     });
 
+    // Define ApiCollection factory
+    usersModule.factory('MyAPICollection', function(ResourceCollection) {
+      function MyAPICollection() {
+
+      }
+      ResourceCollection.collectionInit(MyAPICollection);
+
+      return MyAPICollection;
+    });
+
     // Define users factory
-    usersModule.factory('User', function(resourceFactory) {
+    usersModule.factory('User', function(resourceFactory, MyAPICollection) {
 
       function User(data) {
         this._primaryField = '_id';
         angular.extend(this, data);
       }
-
       resourceFactory.resourceInit(User, 'users');
+      User._collectionClass = MyAPICollection;
 
       // Instance methods
       User.prototype.fullName = function() {
@@ -121,9 +131,6 @@ describe('User use case', function() {
       User.validate = function() {
         return true;
       };
-
-      // Custom static methods
-
       return User;
     });
 
@@ -165,8 +172,8 @@ describe('User use case', function() {
         });
   }));
 
-  beforeEach(inject(function(_ResourceCollection_) {
-    ResourceCollection = _ResourceCollection_;
+  beforeEach(inject(function(_MyAPICollection_) {
+    MyAPICollection = _MyAPICollection_;
   }));
 
   describe('User class', function() {
@@ -193,12 +200,12 @@ describe('User use case', function() {
         $httpBackend.flush();
       });
 
-      it('should return a ResourceCollection with User instances', function() {
+      it('should return a MyAPICollection with User instances', function() {
         $httpBackend.expectGET(collectionUrl);
         var promise = User.query();
         expect(promise).toBeSuccessErrorPromise();
         promise.then(function(collection) {
-          expect(collection instanceof ResourceCollection).toEqual(true);
+          expect(collection instanceof MyAPICollection).toEqual(true);
           expect(collection.length).toBeGreaterThan(0);
           angular.forEach(collection, function(user) {
             expect(user instanceof User).toEqual(true);

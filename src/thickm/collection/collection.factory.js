@@ -22,6 +22,11 @@ angular.module('thickm.collection')
     return rc;
   };
 
+  ResourceCollection.collectionInit = function(collection) {
+    Util.extend(collection, ResourceCollection);
+    angular.extend(collection, ResourceCollection);
+  };
+
   return ResourceCollection;
 
 });

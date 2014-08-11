@@ -36,6 +36,7 @@ angular.module('thickm.resource')
       }
 
       Resource.prototype._primaryField = 'id';
+      Resource._collectionClass = ResourceCollection;
 
       Resource.validate = function() {
         return true;
@@ -49,11 +50,7 @@ angular.module('thickm.resource')
       };
 
       Resource.transformCollectionResponse = function(response) {
-        return ResourceCollection.build(this, response);
-        // var Self = this;
-        // return response.data.map(function(item) {
-        //   return Self.build(item);
-        // });
+        return this._collectionClass.build(this, response);
       };
 
       Resource.transformItemResponse = function(response) {
