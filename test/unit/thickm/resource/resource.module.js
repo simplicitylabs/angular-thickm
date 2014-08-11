@@ -6,6 +6,10 @@ describe('', function() {
   var dependencies;
   dependencies = [];
 
+  var hasModule = function(module) {
+    return dependencies.indexOf(module) >= 0;
+  };
+
   beforeEach(function() {
 
     // Get module
@@ -13,8 +17,8 @@ describe('', function() {
     dependencies = module.requires;
   });
 
-  it('should have no dependencies', function() {
-    expect(dependencies.length).toEqual(0);
+  it('should load collection module', function() {
+    expect(hasModule('thickm.collection')).toBeTruthy();
   });
 
 });
