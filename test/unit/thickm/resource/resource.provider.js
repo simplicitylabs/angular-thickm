@@ -134,12 +134,22 @@ describe('User use case', function() {
   beforeEach(inject(function(_$httpBackend_) {
     $httpBackend = _$httpBackend_;
 
-    $httpBackend.whenGET(collectionUrl).respond(function() {
-      return [200, JSON.stringify([userCollectionData]), {}, 'OK'];
-    });
+    var escCollectionUrl = collectionUrl.replace(/[\/]/g, '\\/');
+    // var regex = new RegExp(escCollectionUrl + '(\\?.*)?$');
+    //
+    // console.log(
+    //   regex.test('http://coolapp.com/api/v1/users?sort=%5B%5B%22partnumber%22,1%5D%5D'),
+    //   regex.test('http://coolapp.com/api/v1/users'),
+    //   regex.test('http://coolapp.com/api/v1/users/1'));
+
+    $httpBackend.whenGET(new RegExp(escCollectionUrl + '(\\?.*)?$')).
+        respond(function() {
+          return [200, JSON.stringify([userCollectionData]), {}, 'OK'];
+        });
 
     angular.forEach(userCollectionData, function(userData) {
-      $httpBackend.whenGET(collectionUrl + '/' + userData._id)
+      $httpBackend.whenGET(new RegExp(escCollectionUrl + '\/' + userData._id +
+          '(\\?.*)?$'))
           .respond(function() {
             return [200, JSON.stringify(userData), {}, 'OK'];
           });
@@ -212,6 +222,13 @@ describe('User use case', function() {
         expect(User.validate).toHaveBeenCalled();
         expect(User.validate.calls.length).toEqual(users.length);
       });
+
+      it('should set query parameters', function() {
+        $httpBackend.expectGET(collectionUrl +
+            '?sort=%5B%5B%22partnumber%22,1%5D%5D');
+        User.query({sort: JSON.stringify([['partnumber', 1]])});
+        $httpBackend.flush();
+      });
     });
 
     describe('get method', function() {
@@ -238,6 +255,12 @@ describe('User use case', function() {
         expect(User.get(knownUserData._id)).toBeSuccessErrorPromise();
         $httpBackend.flush();
         expect(User.validate).toHaveBeenCalled();
+      });
+
+      it('should set query parameters', function() {
+        $httpBackend.expectGET(knownUserUrl + '?embedded=%7B%22groups%22:1%7D');
+        User.get(knownUserData._id, { embedded: { groups: 1 }});
+        $httpBackend.flush();
       });
     });
 
