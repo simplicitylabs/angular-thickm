@@ -9,7 +9,25 @@ angular.module('thickm.resource')
     this.baseUrl = baseUrl;
   };
 
-  this.$get = function($http) {
+  function successErrorPromise(promise) {
+    promise.success = function(fn) {
+      promise.then(function(response) {
+        fn(response);
+      });
+      return promise;
+    };
+
+    promise.error = function(fn) {
+      promise.then(null, function(response) {
+        fn(response);
+      });
+      return promise;
+    };
+
+    return promise;
+  }
+
+  this.$get = function($http, $q) {
     function resourceFactory(collectionName) {
 
       function Resource() {
@@ -53,18 +71,20 @@ angular.module('thickm.resource')
 
       Resource.query = function() {
         var _self = this; // Item
-        return $http.get(provider.baseUrl + collectionName)
+        var promise = $http.get(provider.baseUrl + collectionName)
             .then(function(response) {
               return _self.transformCollectionResponse(response);
             });
+        return successErrorPromise(promise);
       };
 
       Resource.get = function(id) {
         var _self = this;
-        return $http.get(provider.baseUrl + collectionName + '/' + id)
+        var promise = $http.get(provider.baseUrl + collectionName + '/' + id)
             .then(function(response) {
               return _self.transformItemResponse(response);
             });
+        return successErrorPromise(promise);
       };
 
       Resource.prototype.isNew = function() {
@@ -85,16 +105,21 @@ angular.module('thickm.resource')
           promise = $http.put(provider.baseUrl + collectionName + '/' +
               this[this._primaryField]);
         }
-        return promise.then(function(response) {
+        promise.then(function(response) {
           // @TODO: iff there is any data?
           _self.update(response.data);
         });
+        return successErrorPromise(promise);
       };
 
       Resource.prototype.delete = function() {
         if (!this.isNew()) {
           return $http.delete(provider.baseUrl + collectionName + '/' +
             this[this._primaryField]);
+        } else {
+          var deferred = $q.defer();
+          deferred.resolve({});
+          return successErrorPromise(deferred.promise);
         }
       };
 
