@@ -107,7 +107,6 @@ usersModule.factory('User', function(resourceFactory, MyAPICollection, ThickmUti
     this._primaryField = '_id';
     angular.extend(this, data);
   }
-
   var Resource = resourceFactory();
   ThickmUtil.extend(User, Resource);
   angular.extend(User, Resource);
