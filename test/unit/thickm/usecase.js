@@ -101,14 +101,19 @@ usersModule.factory('MyAPICollection', function(ResourceCollection) {
 });
 
 // Define users factory
-usersModule.factory('User', function(resourceFactory, MyAPICollection) {
+usersModule.factory('User', function(resourceFactory, MyAPICollection, ThickmUtil) {
 
   function User(data) {
     this._primaryField = '_id';
     angular.extend(this, data);
   }
-  resourceFactory.resourceInit(User, 'users');
+
+  var Resource = resourceFactory();
+  ThickmUtil.extend(User, Resource);
+  angular.extend(User, Resource);
+
   User._collectionClass = MyAPICollection;
+  User.prototype._resourceName = 'users';
 
   // Instance methods
   User.prototype.fullName = function() {

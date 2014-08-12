@@ -36,14 +36,13 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q, ResourceCollection, ThickmUtil) {
-    function resourceFactory(resourceName) {
-
-      var resourceUrl = provider.baseUrl + resourceName;
+  this.$get = function($http, $q, ResourceCollection) {
+    function resourceFactory() {
 
       function Resource() {
       }
 
+      Resource.prototype._resourceName = 'item';
       Resource.prototype._primaryField = 'id';
       Resource.prototype._collectionClass = ResourceCollection;
 
@@ -56,6 +55,10 @@ angular.module('thickm.resource')
           throw new Error('invalid item ' + JSON.stringify(data));
         }
         return new this(data);
+      };
+
+      Resource.prototype.getResourceUrl = function() {
+        return provider.baseUrl + this._resourceName;
       };
 
       Resource.transformCollectionResponse = function(response) {
@@ -72,7 +75,7 @@ angular.module('thickm.resource')
 
       Resource.query = function(params) {
         var _self = this;
-        var promise = $http.get(resourceUrl, {
+        var promise = $http.get(this.prototype.getResourceUrl(), {
               params: params ? params : null
             })
             .then(function(response) {
@@ -83,7 +86,7 @@ angular.module('thickm.resource')
 
       Resource.get = function(id, params) {
         var _self = this;
-        var promise = $http.get(resourceUrl + '/' + id, {
+        var promise = $http.get(this.prototype.getResourceUrl() + '/' + id, {
               params: params ? params : null
             })
             .then(function(response) {
@@ -109,10 +112,10 @@ angular.module('thickm.resource')
 
         if (this.isNew()) {
           config = { headers: provider.headers.post };
-          promise = $http.post(resourceUrl, data, config);
+          promise = $http.post(this.getResourceUrl(), data, config);
         } else {
           config = { headers: provider.headers.put };
-          promise = $http.put(resourceUrl + '/' + this[this._primaryField],
+          promise = $http.put(this.getResourceUrl() + '/' + this[this._primaryField],
               data, config);
         }
         promise.then(function(response) {
@@ -124,7 +127,7 @@ angular.module('thickm.resource')
 
       Resource.prototype.delete = function() {
         if (!this.isNew()) {
-          return $http.delete(resourceUrl + '/' +
+          return $http.delete(this.getResourceUrl() + '/' +
             this[this._primaryField]);
         } else {
           var deferred = $q.defer();
@@ -138,11 +141,11 @@ angular.module('thickm.resource')
 
     resourceFactory.baseUrl = provider.baseUrl;
 
-    resourceFactory.resourceInit = function(subclass, resourceName) {
-      var Resource = resourceFactory(resourceName);
-      ThickmUtil.extend(subclass, Resource);
-      angular.extend(subclass, Resource);
-    };
+    // resourceFactory.resourceInit = function(subclass, resourceName) {
+    //   var Resource = resourceFactory(resourceName);
+    //   ThickmUtil.extend(subclass, Resource);
+    //   angular.extend(subclass, Resource);
+    // };
 
     return resourceFactory;
   };
