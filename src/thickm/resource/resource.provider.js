@@ -9,6 +9,15 @@ angular.module('thickm.resource')
     this.baseUrl = baseUrl;
   };
 
+  this.headers = {
+    post: {
+      'Content-Type': 'application/json'
+    },
+    put: {
+      'Content-Type': 'application/json'
+    }
+  };
+
   function successErrorPromise(promise) {
     promise.success = function(fn) {
       promise.then(function(response) {
@@ -57,6 +66,10 @@ angular.module('thickm.resource')
         return this.build(response.data);
       };
 
+      Resource.prototype.transformItemRequest = function() {
+        return this;
+      };
+
       Resource.query = function(params) {
         var _self = this;
         var promise = $http.get(resourceUrl, {
@@ -90,12 +103,17 @@ angular.module('thickm.resource')
 
       Resource.prototype.save = function() {
         var promise,
-            _self = this;
+            _self = this,
+            config,
+            data = this.transformItemRequest();
+
         if (this.isNew()) {
-          promise = $http.post(resourceUrl);
+          config = { headers: provider.headers.post };
+          promise = $http.post(resourceUrl, data, config);
         } else {
-          promise = $http.put(resourceUrl + '/' +
-              this[this._primaryField]);
+          config = { headers: provider.headers.put };
+          promise = $http.put(resourceUrl + '/' + this[this._primaryField],
+              data, config);
         }
         promise.then(function(response) {
           // @TODO: iff there is any data?

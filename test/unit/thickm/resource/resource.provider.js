@@ -221,6 +221,22 @@ describe('User use case', function() {
         $httpBackend.flush();
       });
 
+      it('transforms the object when posting new', function() {
+        $httpBackend.expectPOST(testData.collectionUrl);
+        spyOn(newUser, 'transformItemRequest');
+        newUser.save();
+        expect(newUser.transformItemRequest).toHaveBeenCalled();
+        $httpBackend.flush();
+      });
+
+      it('transforms the object when saving old', function() {
+        $httpBackend.expectPUT(testData.knownUserUrl);
+        spyOn(user, 'transformItemRequest');
+        user.save();
+        expect(user.transformItemRequest).toHaveBeenCalled();
+        $httpBackend.flush();
+      });
+
       it('updates id field when posting new user if possible', function() {
         $httpBackend.expectPOST(testData.collectionUrl);
         expect(newUser.save()).toBeSuccessErrorPromise();

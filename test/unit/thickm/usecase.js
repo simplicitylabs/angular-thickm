@@ -37,6 +37,19 @@ var usersModule = angular.module('users', ['thickm']);
   usersModule.value('configureHttpBackend', function($httpBackend) {
     var escCollectionUrl = collectionUrl.replace(/[\/]/g, '\\/');
 
+    function postData() {
+      return true;
+    }
+
+    function postHeaders() {
+      // var json = headers['Content-Type'] === 'application/json';
+      // if (!json) {
+      //   console.warn('Wrong headers ' + headers['Content-Type'], headers);
+      // }
+      // return json;
+      return true;
+    }
+
     $httpBackend.whenGET(new RegExp(escCollectionUrl + '(\\?.*)?$')).
         respond(function() {
           return [200, JSON.stringify(userCollectionData), {}, 'OK'];
@@ -50,12 +63,12 @@ var usersModule = angular.module('users', ['thickm']);
           });
     });
 
-    $httpBackend.whenPUT(collectionUrl + '/' + knownUserData._id)
+    $httpBackend.whenPUT(collectionUrl + '/' + knownUserData._id, postData, postHeaders)
         .respond(function(method, url, data) {
           return [200, JSON.stringify(data), {}, 'OK'];
         });
 
-    $httpBackend.whenPOST(collectionUrl).respond(function() {
+    $httpBackend.whenPOST(collectionUrl, postData, postHeaders).respond(function() {
       return [201, JSON.stringify(knownUserData), {}, 'Created'];
     });
 
