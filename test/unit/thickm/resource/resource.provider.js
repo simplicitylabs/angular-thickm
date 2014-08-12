@@ -37,8 +37,8 @@ describe('thickm resourceFactoryProvider', function() {
 
   beforeEach(function() {
     var fakeModule = angular.module('fakeModule', function() {});
-    fakeModule.config(function(resourceFactoryProvider) {
-      provider = resourceFactoryProvider;
+    fakeModule.config(function(ResourceProvider) {
+      provider = ResourceProvider;
     });
 
     module('thickm.resource', 'fakeModule');
@@ -50,7 +50,7 @@ describe('thickm resourceFactoryProvider', function() {
     var baseUrl = 'http://example.com/api/';
     expect(provider).not.toBeUndefined();
     provider.setBaseUrl(baseUrl);
-    expect(provider.$get().baseUrl).toEqual(baseUrl);
+    expect(provider.baseUrl).toEqual(baseUrl);
   });
 });
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('thickm.resource')
-.provider('resourceFactory', function ResourceFactoryProvider() {
+.provider('Resource', function ResourceFactoryProvider() {
 
   var provider = this;
 
@@ -37,7 +37,7 @@ angular.module('thickm.resource')
   }
 
   this.$get = function($http, $q, ResourceCollection) {
-    function resourceFactory() {
+    // function resourceFactory() {
 
       function Resource() {
       }
@@ -144,10 +144,10 @@ angular.module('thickm.resource')
       };
 
       return Resource;
-    }
-
-    resourceFactory.baseUrl = provider.baseUrl;
-
-    return resourceFactory;
-  };
+    };
+    //
+    // resourceFactory.baseUrl = provider.baseUrl;
+    //
+    // return resourceFactory;
+  // };
 });
