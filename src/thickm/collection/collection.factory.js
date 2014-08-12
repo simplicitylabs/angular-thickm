@@ -40,11 +40,6 @@ angular.module('thickm.collection')
     return rc;
   };
 
-  ResourceCollection.collectionInit = function(collection) {
-    ThickmUtil.extend(collection, ResourceCollection);
-    angular.extend(collection, ResourceCollection);
-  };
-
   return ResourceCollection;
 
 });

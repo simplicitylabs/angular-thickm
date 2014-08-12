@@ -85,11 +85,14 @@ usersModule.config(function(ResourceProvider) {
 });
 
 // Define ApiCollection factory
-usersModule.factory('MyAPICollection', function(ResourceCollection) {
+usersModule.factory('MyAPICollection', function(ResourceCollection, ThickmUtil) {
   function MyAPICollection() {
 
   }
-  ResourceCollection.collectionInit(MyAPICollection);
+
+  ThickmUtil.extend(MyAPICollection, ResourceCollection);
+  angular.extend(MyAPICollection, ResourceCollection);
+
   MyAPICollection._itemsField = '_items';
   MyAPICollection._metaField = '_meta';
 
