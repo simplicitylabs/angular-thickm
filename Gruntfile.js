@@ -15,8 +15,9 @@ module.exports = function (grunt) {
       library: {
         src: [
         // 'src/thickm/thickm.prefix',
-        'src/thickm/thickm.module.js',
-        'src/thickm/resource/*.js',
+        'src/**/*.module.js',
+        'src/**/*.provider.js',
+        'src/**/*.factory.js',
         'src/thickm/thickm.suffix'
         ],
         dest: 'dist/angular-thickm.js'

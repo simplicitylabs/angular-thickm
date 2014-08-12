@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('thickm.collection')
-.factory('ResourceCollection', function resourceCollectionFactory(Util) {
+.factory('ResourceCollection', function resourceCollectionFactory(ThickmUtil) {
 
   function ResourceCollection() {
     Array.apply(this, arguments);
   }
-  Util.extend(ResourceCollection, Array);
+  ThickmUtil.extend(ResourceCollection, Array);
 
   ResourceCollection._itemsField = null;
   ResourceCollection._metaField = 'meta';
@@ -41,7 +41,7 @@ angular.module('thickm.collection')
   };
 
   ResourceCollection.collectionInit = function(collection) {
-    Util.extend(collection, ResourceCollection);
+    ThickmUtil.extend(collection, ResourceCollection);
     angular.extend(collection, ResourceCollection);
   };
 

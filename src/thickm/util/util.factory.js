@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('thickm.util')
-.factory('Util', function Util() {
+.factory('ThickmUtil', function Util() {
 
   function extend(subclass, superclass) {
     var Tmp = function() {};

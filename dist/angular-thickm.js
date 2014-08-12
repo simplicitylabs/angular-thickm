@@ -1,13 +1,17 @@
 (function(window, document) {
   'use strict';
+// Source: src/thickm/collection/collection.module.js
+angular.module('thickm.collection', ['thickm.util']);
+// Source: src/thickm/resource/resource.module.js
+angular.module('thickm.resource', ['thickm.collection', 'thickm.util']);
 // Source: src/thickm/thickm.module.js
 angular.module('thickm', [
   'thickm.resource',
   'thickm.collection',
   'thickm.util'
 ]);
-// Source: src/thickm/resource/resource.module.js
-angular.module('thickm.resource', ['thickm.collection', 'thickm.util']);
+// Source: src/thickm/util/util.module.js
+angular.module('thickm.util', []);
 // Source: src/thickm/resource/resource.provider.js
 angular.module('thickm.resource')
 .provider('resourceFactory', function ResourceFactoryProvider() {
@@ -36,7 +40,7 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q, ResourceCollection, Util) {
+  this.$get = function($http, $q, ResourceCollection, ThickmUtil) {
     function resourceFactory(resourceName) {
 
       var resourceUrl = provider.baseUrl + resourceName;
@@ -45,7 +49,7 @@ angular.module('thickm.resource')
       }
 
       Resource.prototype._primaryField = 'id';
-      Resource._collectionClass = ResourceCollection;
+      Resource.prototype._collectionClass = ResourceCollection;
 
       Resource.validate = function() {
         return true;
@@ -131,11 +135,75 @@ angular.module('thickm.resource')
 
     resourceFactory.resourceInit = function(subclass, resourceName) {
       var Resource = resourceFactory(resourceName);
-      Util.extend(subclass, Resource);
+      ThickmUtil.extend(subclass, Resource);
       angular.extend(subclass, Resource);
     };
 
     return resourceFactory;
+  };
+});
+// Source: src/thickm/collection/collection.factory.js
+angular.module('thickm.collection')
+.factory('ResourceCollection', function resourceCollectionFactory(ThickmUtil) {
+
+  function ResourceCollection() {
+    Array.apply(this, arguments);
+  }
+  ThickmUtil.extend(ResourceCollection, Array);
+
+  ResourceCollection._itemsField = null;
+  ResourceCollection._metaField = 'meta';
+
+  ResourceCollection.itemsFromResponse = function(cls, response) {
+    var data = this._itemsField ?
+        response.data[this._itemsField] : response.data;
+    return data.map(function(item) { return cls.build(item); });
+  };
+
+  ResourceCollection.metaFromResponse = function(cls, response) {
+    return this._metaField ? response.data[this._metaField] : {};
+  };
+
+  ResourceCollection.prototype.query = function(query) {
+    return this.resourceClass.query(query);
+  };
+
+  ResourceCollection.build = function(cls, response) {
+    var rc = new this();
+
+    rc._resourceClass = cls;
+
+    var items = this.itemsFromResponse(cls, response);
+    angular.forEach(items, function(item) {
+      rc.push(item);
+    });
+
+    rc._meta = this.metaFromResponse(cls, response);
+
+    return rc;
+  };
+
+  ResourceCollection.collectionInit = function(collection) {
+    ThickmUtil.extend(collection, ResourceCollection);
+    angular.extend(collection, ResourceCollection);
+  };
+
+  return ResourceCollection;
+
+});
+// Source: src/thickm/util/util.factory.js
+angular.module('thickm.util')
+.factory('ThickmUtil', function Util() {
+
+  function extend(subclass, superclass) {
+    var Tmp = function() {};
+    Tmp.prototype = superclass.prototype;
+    subclass.prototype = new Tmp();
+    subclass.prototype.constructor = subclass;
+  }
+
+  return {
+    extend: extend
   };
 });
 // Source: src/thickm/thickm.suffix

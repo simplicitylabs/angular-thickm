@@ -27,7 +27,7 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q, ResourceCollection, Util) {
+  this.$get = function($http, $q, ResourceCollection, ThickmUtil) {
     function resourceFactory(resourceName) {
 
       var resourceUrl = provider.baseUrl + resourceName;
@@ -36,7 +36,7 @@ angular.module('thickm.resource')
       }
 
       Resource.prototype._primaryField = 'id';
-      Resource._collectionClass = ResourceCollection;
+      Resource.prototype._collectionClass = ResourceCollection;
 
       Resource.validate = function() {
         return true;
@@ -122,7 +122,7 @@ angular.module('thickm.resource')
 
     resourceFactory.resourceInit = function(subclass, resourceName) {
       var Resource = resourceFactory(resourceName);
-      Util.extend(subclass, Resource);
+      ThickmUtil.extend(subclass, Resource);
       angular.extend(subclass, Resource);
     };
 
