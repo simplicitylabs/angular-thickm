@@ -1,9 +1,13 @@
 (function(window, document) {
   'use strict';
 // Source: src/thickm/thickm.module.js
-angular.module('thickm', []);
+angular.module('thickm', [
+  'thickm.resource',
+  'thickm.collection',
+  'thickm.util'
+]);
 // Source: src/thickm/resource/resource.module.js
-angular.module('thickm.resource', ['thickm']);
+angular.module('thickm.resource', ['thickm.collection', 'thickm.util']);
 // Source: src/thickm/resource/resource.provider.js
 angular.module('thickm.resource')
 .provider('resourceFactory', function ResourceFactoryProvider() {
@@ -32,25 +36,16 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q) {
-    function resourceFactory(collectionName) {
+  this.$get = function($http, $q, ResourceCollection, Util) {
+    function resourceFactory(resourceName) {
+
+      var resourceUrl = provider.baseUrl + resourceName;
 
       function Resource() {
       }
 
-      Resource.prototype.instance = function() {
-        return 'instance';
-      };
-
       Resource.prototype._primaryField = 'id';
-
-      Resource.getClassName = function() {
-        return this.className;
-      };
-
-      Resource.static = function() {
-        return 'static';
-      };
+      Resource._collectionClass = ResourceCollection;
 
       Resource.validate = function() {
         return true;
@@ -64,10 +59,7 @@ angular.module('thickm.resource')
       };
 
       Resource.transformCollectionResponse = function(response) {
-        var Self = this;
-        return response.data.map(function(item) {
-          return Self.build(item);
-        });
+        return this._collectionClass.build(this, response);
       };
 
       Resource.transformItemResponse = function(response) {
@@ -75,8 +67,8 @@ angular.module('thickm.resource')
       };
 
       Resource.query = function(params) {
-        var _self = this; // Item
-        var promise = $http.get(provider.baseUrl + collectionName, {
+        var _self = this;
+        var promise = $http.get(resourceUrl, {
               params: params ? params : null
             })
             .then(function(response) {
@@ -87,7 +79,7 @@ angular.module('thickm.resource')
 
       Resource.get = function(id, params) {
         var _self = this;
-        var promise = $http.get(provider.baseUrl + collectionName + '/' + id, {
+        var promise = $http.get(resourceUrl + '/' + id, {
               params: params ? params : null
             })
             .then(function(response) {
@@ -109,9 +101,9 @@ angular.module('thickm.resource')
         var promise,
             _self = this;
         if (this.isNew()) {
-          promise = $http.post(provider.baseUrl + collectionName);
+          promise = $http.post(resourceUrl);
         } else {
-          promise = $http.put(provider.baseUrl + collectionName + '/' +
+          promise = $http.put(resourceUrl + '/' +
               this[this._primaryField]);
         }
         promise.then(function(response) {
@@ -123,7 +115,7 @@ angular.module('thickm.resource')
 
       Resource.prototype.delete = function() {
         if (!this.isNew()) {
-          return $http.delete(provider.baseUrl + collectionName + '/' +
+          return $http.delete(resourceUrl + '/' +
             this[this._primaryField]);
         } else {
           var deferred = $q.defer();
@@ -137,37 +129,10 @@ angular.module('thickm.resource')
 
     resourceFactory.baseUrl = provider.baseUrl;
 
-    resourceFactory.extend = function(subclass, superclass) {
-      var Tmp = function() {};
-      Tmp.prototype = superclass.prototype;
-      subclass.prototype = new Tmp();
-      subclass.prototype.constructor = subclass;
-    };
-
     resourceFactory.resourceInit = function(subclass, resourceName) {
       var Resource = resourceFactory(resourceName);
-      resourceFactory.extend(subclass, Resource);
+      Util.extend(subclass, Resource);
       angular.extend(subclass, Resource);
-    };
-
-    resourceFactory.itemFactory = function(collectionName) {
-      console.warn('itemFactory is deprecated, use resourceInit.');
-      var Resource = resourceFactory(collectionName);
-
-      function Item(data) {
-        angular.extend(this, data);
-      }
-
-      Item.prototype = new Resource();
-      angular.extend(Item, Resource);
-
-      Item.transformCollectionResponse = function(self, response) {
-        return response.data.map(function(item) {
-          return self.build(item);
-        });
-      };
-
-      return Item;
     };
 
     return resourceFactory;

@@ -52,3 +52,61 @@ describe('ResourceCollection', function() {
     });
   });
 });
+
+describe('ResourceCollection User use case', function() {
+  var $httpBackend;
+  var MyAPICollection;
+  var User;
+  var testData;
+
+  // Set up the module to test
+  beforeEach(function() {
+    module('thickm.collection', 'users');
+    inject(function() {});
+  });
+
+  // Set up $httpBackend
+  beforeEach(inject(function(_$httpBackend_, configureHttpBackend) {
+    $httpBackend = _$httpBackend_;
+    configureHttpBackend($httpBackend);
+  }));
+
+  beforeEach(inject(function(_MyAPICollection_) {
+    MyAPICollection = _MyAPICollection_;
+  }));
+
+  beforeEach(inject(function(_User_, _testData_) {
+    User = _User_;
+    testData = _testData_;
+  }));
+
+  afterEach(function() {
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+  });
+
+  describe('instantiated', function() {
+    var collection;
+
+    beforeEach(function() {
+      collection = MyAPICollection.build(User, {data: testData.userCollectionData});
+    });
+
+    describe('query method', function() {
+      it('exists', function() {
+        expect(angular.isFunction(collection.query)).toEqual(true);
+      });
+    });
+
+    describe('hasNext method', function() {
+      it('exists', function() {
+        expect(angular.isFunction(collection.hasNext)).toEqual(true);
+      });
+
+      it('is true', function() {
+        expect(collection.hasNext()).toEqual(true);
+      });
+    });
+
+  });
+});
