@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('thickm.resource', ['thickm']);
+angular.module('thickm.resource', ['thickm.collection', 'thickm.util']);

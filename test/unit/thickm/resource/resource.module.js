@@ -2,23 +2,27 @@
 
 describe('', function() {
 
-    var module;
-    var dependencies;
-    dependencies = [];
+  var module;
+  var dependencies;
+  dependencies = [];
 
-    var hasModule = function(module) {
-        return dependencies.indexOf(module) >= 0;
-    };
+  var hasModule = function(module) {
+    return dependencies.indexOf(module) >= 0;
+  };
 
-    beforeEach(function() {
+  beforeEach(function() {
 
-        // Get module
-        module = angular.module('thickm.resource');
-        dependencies = module.requires;
-    });
+    // Get module
+    module = angular.module('thickm.resource');
+    dependencies = module.requires;
+  });
 
-    it('should load resource module', function() {
-        expect(hasModule('thickm')).toBeTruthy();
-    });
+  it('should load collection module', function() {
+    expect(hasModule('thickm.collection')).toBeTruthy();
+  });
+
+  it('should load util module', function() {
+    expect(hasModule('thickm.util')).toBeTruthy();
+  });
 
 });

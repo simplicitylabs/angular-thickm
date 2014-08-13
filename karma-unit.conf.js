@@ -23,7 +23,9 @@ module.exports = function(config) {
 
       'src/**/*.module.js',
       'src/**/*.provider.js',
+      'src/**/*.factory.js',
 
+      'test/unit/thickm/usecase.js',
       'test/unit/**/*.js'
     ],
 

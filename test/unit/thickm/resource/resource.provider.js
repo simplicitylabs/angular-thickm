@@ -1,8 +1,5 @@
 'use strict';
 
-var faker = window.faker;
-Math.seedrandom('thikcm');
-
 /**
  * Custom matchers
  */
@@ -40,8 +37,8 @@ describe('thickm resourceFactoryProvider', function() {
 
   beforeEach(function() {
     var fakeModule = angular.module('fakeModule', function() {});
-    fakeModule.config(function(resourceFactoryProvider) {
-      provider = resourceFactoryProvider;
+    fakeModule.config(function(ResourceProvider) {
+      provider = ResourceProvider;
     });
 
     module('thickm.resource', 'fakeModule');
@@ -53,7 +50,7 @@ describe('thickm resourceFactoryProvider', function() {
     var baseUrl = 'http://example.com/api/';
     expect(provider).not.toBeUndefined();
     provider.setBaseUrl(baseUrl);
-    expect(provider.$get().baseUrl).toEqual(baseUrl);
+    expect(provider.baseUrl).toEqual(baseUrl);
   });
 });
 
@@ -75,105 +72,30 @@ describe('thickm resourceFactory', function() {
  * Use case
  */
 describe('User use case', function() {
-
-  // Function to generate random user data
-  function randomUserData() {
-    return {
-      _id: faker.Helpers.replaceSymbolWithNumber('###############', '#'),
-      username: faker.Internet.userName(),
-    };
-  }
-
-  var resourceName = 'users';
-  var baseUrl = 'http://coolapp.com/api/v1/';
-  var collectionUrl = baseUrl + resourceName;
-  var userCollectionData = Array.apply(null, new Array(25)).map(randomUserData);
-  var knownUserData = userCollectionData[0];
-  var knownUserUrl = collectionUrl + '/' + knownUserData._id;
   var $httpBackend;
+  var MyAPICollection;
 
   // Set up the module to test
   beforeEach(function() {
-    var usersModule = angular.module('users', ['thickm.resource']);
-
-    // Config sep
-    usersModule.config(function(resourceFactoryProvider) {
-      resourceFactoryProvider.setBaseUrl(baseUrl);
-    });
-
-    // Define users factory
-    usersModule.factory('User', function(resourceFactory) {
-
-      function User(data) {
-        this._primaryField = '_id';
-        angular.extend(this, data);
-      }
-
-      resourceFactory.resourceInit(User, 'users');
-
-      // Instance methods
-      User.prototype.fullName = function() {
-        return 'full name';
-      };
-
-      // Overwrite inherited static methods
-      User.validate = function() {
-        return true;
-      };
-
-      // Custom static methods
-
-      return User;
-    });
-
     module('thickm.resource', 'users');
     inject(function() {});
   });
 
   // Set up $httpBackend
-  beforeEach(inject(function(_$httpBackend_) {
+  beforeEach(inject(function(_$httpBackend_, configureHttpBackend) {
     $httpBackend = _$httpBackend_;
+    configureHttpBackend($httpBackend);
+  }));
 
-    var escCollectionUrl = collectionUrl.replace(/[\/]/g, '\\/');
-    // var regex = new RegExp(escCollectionUrl + '(\\?.*)?$');
-    //
-    // console.log(
-    //   regex.test('http://coolapp.com/api/v1/users?sort=%5B%5B%22partnumber%22,1%5D%5D'),
-    //   regex.test('http://coolapp.com/api/v1/users'),
-    //   regex.test('http://coolapp.com/api/v1/users/1'));
-
-    $httpBackend.whenGET(new RegExp(escCollectionUrl + '(\\?.*)?$')).
-        respond(function() {
-          return [200, JSON.stringify([userCollectionData]), {}, 'OK'];
-        });
-
-    angular.forEach(userCollectionData, function(userData) {
-      $httpBackend.whenGET(new RegExp(escCollectionUrl + '\/' + userData._id +
-          '(\\?.*)?$'))
-          .respond(function() {
-            return [200, JSON.stringify(userData), {}, 'OK'];
-          });
-    });
-
-    $httpBackend.whenPUT(collectionUrl + '/' + knownUserData._id)
-        .respond(function(method, url, data) {
-          return [200, JSON.stringify(data), {}, 'OK'];
-        });
-
-    $httpBackend.whenPOST(collectionUrl).respond(function() {
-      return [201, JSON.stringify(knownUserData), {}, 'Created'];
-    });
-
-    $httpBackend.whenDELETE(collectionUrl + '/' + knownUserData._id)
-        .respond(function() {
-          return [200, '', {}, 'OK'];
-        });
+  beforeEach(inject(function(_MyAPICollection_) {
+    MyAPICollection = _MyAPICollection_;
   }));
 
   describe('User class', function() {
-    var User;
-    beforeEach(inject(function(_User_) {
+    var User, testData;
+    beforeEach(inject(function(_User_, _testData_) {
       User = _User_;
+      testData = _testData_;
     }));
 
     afterEach(function() {
@@ -189,19 +111,19 @@ describe('User use case', function() {
 
     describe('query method', function() {
       it('should query baseUrl/users', function() {
-        $httpBackend.expectGET(collectionUrl);
+        $httpBackend.expectGET(testData.collectionUrl);
         expect(User.query()).toBeSuccessErrorPromise();
         $httpBackend.flush();
       });
 
-      it('should return an array of user instances', function() {
-        $httpBackend.expectGET(collectionUrl);
+      it('should return a MyAPICollection with User instances', function() {
+        $httpBackend.expectGET(testData.collectionUrl);
         var promise = User.query();
         expect(promise).toBeSuccessErrorPromise();
-        promise.then(function(users) {
-          expect(angular.isArray(users)).toEqual(true);
-          expect(users.length).toBeGreaterThan(0);
-          angular.forEach(users, function(user) {
+        promise.then(function(collection) {
+          expect(collection instanceof MyAPICollection).toEqual(true);
+          expect(collection.length).toEqual(25);
+          angular.forEach(collection, function(user) {
             expect(user instanceof User).toEqual(true);
             expect(user.fullName).not.toBeUndefined();
           });
@@ -210,7 +132,7 @@ describe('User use case', function() {
       });
 
       it('should validate users from API', function() {
-        $httpBackend.expectGET(collectionUrl);
+        $httpBackend.expectGET(testData.collectionUrl);
         spyOn(User, 'validate').andCallThrough();
         var users;
         var promise = User.query();
@@ -224,7 +146,7 @@ describe('User use case', function() {
       });
 
       it('should set query parameters', function() {
-        $httpBackend.expectGET(collectionUrl +
+        $httpBackend.expectGET(testData.collectionUrl +
             '?sort=%5B%5B%22partnumber%22,1%5D%5D');
         User.query({sort: JSON.stringify([['partnumber', 1]])});
         $httpBackend.flush();
@@ -233,46 +155,46 @@ describe('User use case', function() {
 
     describe('get method', function() {
       it('should query baseUrl/users/:_id', function() {
-        $httpBackend.expectGET(knownUserUrl);
-        expect(User.get(knownUserData._id)).toBeSuccessErrorPromise();
+        $httpBackend.expectGET(testData.knownUserUrl);
+        expect(User.get(testData.knownUserData._id)).toBeSuccessErrorPromise();
         $httpBackend.flush();
       });
 
       it('should return an user instance', function() {
-        $httpBackend.expectGET(knownUserUrl);
-        var promise = User.get(knownUserData._id);
+        $httpBackend.expectGET(testData.knownUserUrl);
+        var promise = User.get(testData.knownUserData._id);
         expect(promise).toBeSuccessErrorPromise();
         promise.then(function(user) {
           expect(user instanceof User).toEqual(true);
-          expect(user.username).toEqual(knownUserData.username);
+          expect(user.username).toEqual(testData.knownUserData.username);
         });
         $httpBackend.flush();
       });
 
       it('should validate user from API', function() {
-        $httpBackend.expectGET(knownUserUrl);
+        $httpBackend.expectGET(testData.knownUserUrl);
         spyOn(User, 'validate').andCallThrough();
-        expect(User.get(knownUserData._id)).toBeSuccessErrorPromise();
+        expect(User.get(testData.knownUserData._id)).toBeSuccessErrorPromise();
         $httpBackend.flush();
         expect(User.validate).toHaveBeenCalled();
       });
 
       it('should set query parameters', function() {
-        $httpBackend.expectGET(knownUserUrl + '?embedded=%7B%22groups%22:1%7D');
-        User.get(knownUserData._id, { embedded: { groups: 1 }});
+        $httpBackend.expectGET(testData.knownUserUrl + '?embedded=%7B%22groups%22:1%7D');
+        User.get(testData.knownUserData._id, { embedded: { groups: 1 }});
         $httpBackend.flush();
       });
     });
 
     describe('isNew instance method', function() {
       it('returns true when user has no _id', function() {
-        var user = User.build(knownUserData);
+        var user = User.build(testData.knownUserData);
         user._id = undefined;
         expect(user.isNew()).toEqual(true);
       });
 
       it('returns false when user has _id', function() {
-        var user = User.build(knownUserData);
+        var user = User.build(testData.knownUserData);
         expect(user.isNew()).toEqual(false);
       });
     });
@@ -281,26 +203,42 @@ describe('User use case', function() {
       var user, newUser;
 
       beforeEach(function() {
-        user = User.build(knownUserData);
-        var newUserData = angular.copy(knownUserData);
+        user = User.build(testData.knownUserData);
+        var newUserData = angular.copy(testData.knownUserData);
         newUserData._id = undefined;
         newUser = User.build(newUserData);
       });
 
       it('puts known user to users/:_id', function() {
-        $httpBackend.expectPUT(knownUserUrl);
+        $httpBackend.expectPUT(testData.knownUserUrl);
         expect(user.save()).toBeSuccessErrorPromise();
         $httpBackend.flush();
       });
 
       it('posts new user to users/', function() {
-        $httpBackend.expectPOST(collectionUrl);
+        $httpBackend.expectPOST(testData.collectionUrl);
         expect(newUser.save()).toBeSuccessErrorPromise();
         $httpBackend.flush();
       });
 
+      it('transforms the object when posting new', function() {
+        $httpBackend.expectPOST(testData.collectionUrl);
+        spyOn(newUser, 'transformItemRequest');
+        newUser.save();
+        expect(newUser.transformItemRequest).toHaveBeenCalled();
+        $httpBackend.flush();
+      });
+
+      it('transforms the object when saving old', function() {
+        $httpBackend.expectPUT(testData.knownUserUrl);
+        spyOn(user, 'transformItemRequest');
+        user.save();
+        expect(user.transformItemRequest).toHaveBeenCalled();
+        $httpBackend.flush();
+      });
+
       it('updates id field when posting new user if possible', function() {
-        $httpBackend.expectPOST(collectionUrl);
+        $httpBackend.expectPOST(testData.collectionUrl);
         expect(newUser.save()).toBeSuccessErrorPromise();
         $httpBackend.flush();
         expect(newUser._id).not.toBeUndefined();
@@ -312,11 +250,11 @@ describe('User use case', function() {
       var user;
 
       beforeEach(function() {
-        user = User.build(knownUserData);
+        user = User.build(testData.knownUserData);
       });
 
       it('deletes known users to users/:_id', function() {
-        $httpBackend.expectDELETE(knownUserUrl);
+        $httpBackend.expectDELETE(testData.knownUserUrl);
         expect(user.delete()).toBeSuccessErrorPromise();
         $httpBackend.flush();
       });

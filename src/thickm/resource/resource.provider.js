@@ -1,12 +1,21 @@
 'use strict';
 
 angular.module('thickm.resource')
-.provider('resourceFactory', function ResourceFactoryProvider() {
+.provider('Resource', function ResourceFactoryProvider() {
 
   var provider = this;
 
   this.setBaseUrl = function(baseUrl) {
     this.baseUrl = baseUrl;
+  };
+
+  this.headers = {
+    post: {
+      'Content-Type': 'application/json'
+    },
+    put: {
+      'Content-Type': 'application/json'
+    }
   };
 
   function successErrorPromise(promise) {
@@ -27,15 +36,15 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q) {
-    function resourceFactory(resourceName) {
-
-      var resourceUrl = provider.baseUrl + resourceName;
+  this.$get = function($http, $q, ResourceCollection) {
+    // function resourceFactory() {
 
       function Resource() {
       }
 
+      Resource.prototype._resourceName = 'item';
       Resource.prototype._primaryField = 'id';
+      Resource.prototype._collectionClass = ResourceCollection;
 
       Resource.validate = function() {
         return true;
@@ -48,20 +57,29 @@ angular.module('thickm.resource')
         return new this(data);
       };
 
+      Resource.prototype.getCollectionUrl = function() {
+        return provider.baseUrl + this._resourceName;
+      };
+
+      Resource.prototype.getResourceUrl = function(id) {
+        return this.getCollectionUrl() + '/' + (id || this[this._primaryField]);
+      };
+
       Resource.transformCollectionResponse = function(response) {
-        var Self = this;
-        return response.data.map(function(item) {
-          return Self.build(item);
-        });
+        return this._collectionClass.build(this, response);
       };
 
       Resource.transformItemResponse = function(response) {
         return this.build(response.data);
       };
 
+      Resource.prototype.transformItemRequest = function() {
+        return this;
+      };
+
       Resource.query = function(params) {
         var _self = this;
-        var promise = $http.get(resourceUrl, {
+        var promise = $http.get(this.prototype.getCollectionUrl(), {
               params: params ? params : null
             })
             .then(function(response) {
@@ -72,7 +90,7 @@ angular.module('thickm.resource')
 
       Resource.get = function(id, params) {
         var _self = this;
-        var promise = $http.get(resourceUrl + '/' + id, {
+        var promise = $http.get(this.prototype.getResourceUrl(id), {
               params: params ? params : null
             })
             .then(function(response) {
@@ -92,23 +110,31 @@ angular.module('thickm.resource')
 
       Resource.prototype.save = function() {
         var promise,
-            _self = this;
+            _self = this,
+            isNew = this.isNew();
+
+        var config = {};
+        config.headers = isNew ? provider.headers.post : provider.headers.put;
+
+        var data = this.transformItemRequest(config.headers);
+
         if (this.isNew()) {
-          promise = $http.post(resourceUrl);
+          promise = $http.post(this.getCollectionUrl(), data, config);
         } else {
-          promise = $http.put(resourceUrl + '/' +
-              this[this._primaryField]);
+          promise = $http.put(this.getResourceUrl(), data, config);
         }
+
         promise.then(function(response) {
           // @TODO: iff there is any data?
           _self.update(response.data);
         });
+
         return successErrorPromise(promise);
       };
 
       Resource.prototype.delete = function() {
         if (!this.isNew()) {
-          return $http.delete(resourceUrl + '/' +
+          return $http.delete(this.getCollectionUrl() + '/' +
             this[this._primaryField]);
         } else {
           var deferred = $q.defer();
@@ -118,23 +144,10 @@ angular.module('thickm.resource')
       };
 
       return Resource;
-    }
-
-    resourceFactory.baseUrl = provider.baseUrl;
-
-    resourceFactory.extend = function(subclass, superclass) {
-      var Tmp = function() {};
-      Tmp.prototype = superclass.prototype;
-      subclass.prototype = new Tmp();
-      subclass.prototype.constructor = subclass;
     };
-
-    resourceFactory.resourceInit = function(subclass, resourceName) {
-      var Resource = resourceFactory(resourceName);
-      resourceFactory.extend(subclass, Resource);
-      angular.extend(subclass, Resource);
-    };
-
-    return resourceFactory;
-  };
+    //
+    // resourceFactory.baseUrl = provider.baseUrl;
+    //
+    // return resourceFactory;
+  // };
 });
