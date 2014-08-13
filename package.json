@@ -1,10 +1,13 @@
 {
   "name": "angular-thickm",
-  "version": "0.0.0",
+  "version": "0.0.1-dev",
   "author": {
     "name": "Mikael Berg",
     "email": "miberg@silabs.com"
   },
+  "description": "Class based REST API interface",
+  "keywords": ["angular", "angularjs", "rest", "resource"],
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.5",
