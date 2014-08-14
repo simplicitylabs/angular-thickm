@@ -90,26 +90,30 @@ angular.module('thickm.resource')
         return this;
       };
 
-      Resource.query = function(params) {
+      Resource.queryUrl = function(url, params) {
         var _self = this;
-        var promise = $http.get(this.prototype.getCollectionUrl(), {
-              params: params ? params : null
-            })
+        var promise = $http.get(url, { params: params ? params : null })
             .then(function(response) {
               return _self.transformCollectionResponse(response);
             });
         return successErrorPromise(promise);
       };
 
-      Resource.get = function(id, params) {
+      Resource.query = function(params) {
+        return this.queryUrl(this.prototype.getCollectionUrl(), params);
+      };
+
+      Resource.getUrl = function(url, params) {
         var _self = this;
-        var promise = $http.get(this.prototype.getResourceUrl(id), {
-              params: params ? params : null
-            })
+        var promise = $http.get(url, { params: params ? params : null})
             .then(function(response) {
               return _self.transformItemResponse(response);
             });
         return successErrorPromise(promise);
+      };
+
+      Resource.get = function(id, params) {
+        return this.getUrl(this.prototype.getResourceUrl(id), params);
       };
 
       Resource.prototype.isNew = function() {

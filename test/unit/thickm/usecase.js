@@ -24,6 +24,8 @@ var usersModule = angular.module('users', ['thickm']);
   };
   var knownUserData = userCollectionData._items[0];
   var knownUserUrl = collectionUrl + '/' + knownUserData._id;
+  var specifiedItemUrl = 'specifiedItemUrl';
+  var specifiedCollectionUrl = 'specifiedCollectionUrl';
 
   usersModule.value('testData', {
     baseUrl: baseUrl,
@@ -31,7 +33,9 @@ var usersModule = angular.module('users', ['thickm']);
     collectionUrl: collectionUrl,
     userCollectionData: userCollectionData,
     knownUserData: knownUserData,
-    knownUserUrl: knownUserUrl
+    knownUserUrl: knownUserUrl,
+    specifiedItemUrl: specifiedItemUrl,
+    specifiedCollectionUrl: specifiedCollectionUrl
   });
 
   usersModule.value('configureHttpBackend', function($httpBackend) {
@@ -55,6 +59,11 @@ var usersModule = angular.module('users', ['thickm']);
           return [200, JSON.stringify(userCollectionData), {}, 'OK'];
         });
 
+    $httpBackend.whenGET(new RegExp(specifiedCollectionUrl + '(\\?.*)?$'))
+        .respond(function() {
+          return [200, JSON.stringify(userCollectionData), {}, 'OK'];
+        });
+
     angular.forEach(userCollectionData._items, function(userData) {
       $httpBackend.whenGET(new RegExp(escCollectionUrl + '\/' + userData._id +
           '(\\?.*)?$'))
@@ -62,6 +71,11 @@ var usersModule = angular.module('users', ['thickm']);
             return [200, JSON.stringify(userData), {}, 'OK'];
           });
     });
+
+    $httpBackend.whenGET(new RegExp(specifiedItemUrl + '(\\?.*)?$'))
+        .respond(function() {
+          return [200, JSON.stringify(knownUserData), {}, 'OK'];
+        });
 
     $httpBackend.whenPUT(collectionUrl + '/' + knownUserData._id, postData, postHeaders)
         .respond(function(method, url, data) {

@@ -153,6 +153,52 @@ describe('User use case', function() {
       });
     });
 
+    describe('queryUrl method', function() {
+      it('should query specified collection url', function() {
+        $httpBackend.expectGET(testData.specifiedCollectionUrl);
+        expect(User.queryUrl(testData.specifiedCollectionUrl))
+            .toBeSuccessErrorPromise();
+        $httpBackend.flush();
+      });
+
+      it('should return a MyAPICollection with User instances', function() {
+        $httpBackend.expectGET(testData.specifiedCollectionUrl);
+        var promise = User.queryUrl(testData.specifiedCollectionUrl);
+        expect(promise).toBeSuccessErrorPromise();
+        promise.then(function(collection) {
+          expect(collection instanceof MyAPICollection).toEqual(true);
+          expect(collection.length).toEqual(25);
+          angular.forEach(collection, function(user) {
+            expect(user instanceof User).toEqual(true);
+            expect(user.fullName).not.toBeUndefined();
+          });
+        });
+        $httpBackend.flush();
+      });
+
+      it('should validate users from API', function() {
+        $httpBackend.expectGET(testData.specifiedCollectionUrl);
+        spyOn(User, 'validate').andCallThrough();
+        var users;
+        var promise = User.queryUrl(testData.specifiedCollectionUrl);
+        expect(promise).toBeSuccessErrorPromise();
+        promise.then(function(_users) {
+          users = _users;
+        });
+        $httpBackend.flush();
+        expect(User.validate).toHaveBeenCalled();
+        expect(User.validate.calls.length).toEqual(users.length);
+      });
+
+      it('should set query parameters', function() {
+        $httpBackend.expectGET(testData.specifiedCollectionUrl +
+            '?sort=%5B%5B%22partnumber%22,1%5D%5D');
+        User.queryUrl(testData.specifiedCollectionUrl,
+              {sort: JSON.stringify([['partnumber', 1]])});
+        $httpBackend.flush();
+      });
+    });
+
     describe('get method', function() {
       it('should query baseUrl/users/:_id', function() {
         $httpBackend.expectGET(testData.knownUserUrl);
@@ -182,6 +228,39 @@ describe('User use case', function() {
       it('should set query parameters', function() {
         $httpBackend.expectGET(testData.knownUserUrl + '?embedded=%7B%22groups%22:1%7D');
         User.get(testData.knownUserData._id, { embedded: { groups: 1 }});
+        $httpBackend.flush();
+      });
+    });
+
+    describe('getUrl method', function() {
+      it('should query someurl', function() {
+        $httpBackend.expectGET(testData.specifiedItemUrl);
+        expect(User.getUrl(testData.specifiedItemUrl)).toBeSuccessErrorPromise();
+        $httpBackend.flush();
+      });
+
+      it('should return an user instance', function() {
+        $httpBackend.expectGET(testData.specifiedItemUrl);
+        var promise = User.getUrl(testData.specifiedItemUrl);
+        expect(promise).toBeSuccessErrorPromise();
+        promise.then(function(user) {
+          expect(user instanceof User).toEqual(true);
+          expect(user.username).toEqual(testData.knownUserData.username);
+        });
+        $httpBackend.flush();
+      });
+
+      it('should validate user from API', function() {
+        $httpBackend.expectGET(testData.specifiedItemUrl);
+        spyOn(User, 'validate').andCallThrough();
+        expect(User.getUrl(testData.specifiedItemUrl)).toBeSuccessErrorPromise();
+        $httpBackend.flush();
+        expect(User.validate).toHaveBeenCalled();
+      });
+
+      it('should set query parameters', function() {
+        $httpBackend.expectGET(testData.specifiedItemUrl + '?embedded=%7B%22groups%22:1%7D');
+        User.getUrl(testData.specifiedItemUrl, { embedded: { groups: 1 }});
         $httpBackend.flush();
       });
     });
