@@ -343,6 +343,13 @@ describe('User use case', function() {
         expect(user.delete()).toBeSuccessErrorPromise();
         // $httpBackend causes error if request was sent
       });
+
+      it('transforms item request', function() {
+        spyOn(user, 'transformItemRequest');
+        user.delete();
+        expect(user.transformItemRequest).toHaveBeenCalled();
+        $httpBackend.flush();
+      });
     });
   });
 

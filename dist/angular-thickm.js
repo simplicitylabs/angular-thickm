@@ -50,7 +50,6 @@ angular.module('thickm.resource')
   }
 
   this.$get = function($http, $q, ResourceCollection) {
-    // function resourceFactory() {
 
       function Resource() {
       }
@@ -151,8 +150,10 @@ angular.module('thickm.resource')
 
       Resource.prototype.delete = function() {
         if (!this.isNew()) {
-          return $http.delete(this.getCollectionUrl() + '/' +
-            this[this._primaryField]);
+          var config = {};
+          config.headers = provider.headers.delete;
+          var data = this.transformItemRequest(config.headers);
+          return $http.delete(this.getResourceUrl(), data, config);
         } else {
           var deferred = $q.defer();
           deferred.resolve({});
@@ -162,11 +163,7 @@ angular.module('thickm.resource')
 
       return Resource;
     };
-    //
-    // resourceFactory.baseUrl = provider.baseUrl;
-    //
-    // return resourceFactory;
-  // };
+
 });
 // Source: src/thickm/collection/collection.factory.js
 angular.module('thickm.collection')
