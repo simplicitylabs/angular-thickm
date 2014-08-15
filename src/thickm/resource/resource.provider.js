@@ -120,7 +120,8 @@ angular.module('thickm.resource')
             isNew = this.isNew();
 
         var config = {};
-        config.headers = isNew ? provider.headers.post : provider.headers.put;
+        config.headers = isNew ? angular.copy(provider.headers.post) :
+            angular.copy(provider.headers.put);
 
         var data = this.transformItemRequest(config.headers);
 
@@ -141,9 +142,9 @@ angular.module('thickm.resource')
       Resource.prototype.delete = function() {
         if (!this.isNew()) {
           var config = {};
-          config.headers = provider.headers.delete;
-          var data = this.transformItemRequest(config.headers);
-          return $http.delete(this.getResourceUrl(), data, config);
+          config.headers = angular.copy(provider.headers.delete);
+          this.transformItemRequest(config.headers);
+          return $http.delete(this.getResourceUrl(), config);
         } else {
           var deferred = $q.defer();
           deferred.resolve({});
