@@ -15,6 +15,9 @@ angular.module('thickm.resource')
     },
     put: {
       'Content-Type': 'application/json'
+    },
+    delete: {
+      'Content-Type': 'application/json'
     }
   };
 
