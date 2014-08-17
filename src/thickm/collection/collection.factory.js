@@ -21,10 +21,6 @@ angular.module('thickm.collection')
     return this._metaField ? response.data[this._metaField] : {};
   };
 
-  ResourceCollection.prototype.query = function(query) {
-    return this.resourceClass.query(query);
-  };
-
   ResourceCollection.build = function(cls, response) {
     var rc = new this();
 

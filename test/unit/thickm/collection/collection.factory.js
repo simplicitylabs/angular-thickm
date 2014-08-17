@@ -51,6 +51,77 @@ describe('ResourceCollection', function() {
       expect(ids).toEqual(3);
     });
   });
+
+  describe('fields', function() {
+    it('has _itemsField null', function() {
+      expect(ResourceCollection._itemsField).toEqual(null);
+    });
+
+    it('has _metaField meta', function() {
+      expect(ResourceCollection._metaField).toEqual('meta');
+    });
+  });
+
+  describe('itemsFromResponse', function() {
+    function Cls() {}
+    Cls.build = function() { return new Cls(); };
+
+    it('returns array of Cls built with Cls.build when response.data is array', function() {
+      var response = {data: [1, 2]};
+      spyOn(Cls, 'build').andCallThrough();
+      var items = ResourceCollection.itemsFromResponse(Cls, response);
+      expect(items.length).toEqual(2);
+      expect(items[0] instanceof Cls).toEqual(true);
+      expect(Cls.build).toHaveBeenCalledWith(2);
+    });
+
+    it('returns array of Cls when response.data is object', function() {
+      ResourceCollection._itemsField = 'items';
+      var response = {data: {items: [1, 2]}};
+      spyOn(Cls, 'build').andCallThrough();
+      var items = ResourceCollection.itemsFromResponse(Cls, response);
+      expect(items.length).toEqual(2);
+      expect(items[0] instanceof Cls).toEqual(true);
+      expect(Cls.build).toHaveBeenCalledWith(2);
+    });
+  });
+
+  describe('metaFromResponse', function() {
+    function Cls() {}
+
+    it('returns empty object when no _metaField defined', function() {
+      ResourceCollection._metaField = undefined;
+      var response = {data: [1, 2]};
+      expect(ResourceCollection.metaFromResponse(Cls, response)).toEqual({});
+    });
+
+    it('returns meta object when _metaField defined', function() {
+      var response = {data: {meta: {a: 'b'}}};
+      expect(ResourceCollection.metaFromResponse(Cls, response)).toEqual({a: 'b'});
+    });
+  });
+
+  describe('build', function() {
+    function Cls() {}
+    Cls.build = function() { return new Cls(); };
+
+    it('returns instance with Cls items', function() {
+      var response = {data: [1, 2]};
+      var rc = ResourceCollection.build(Cls, response);
+      expect(rc.length).toEqual(2);
+      expect(rc instanceof ResourceCollection).toEqual(true);
+      expect(rc[0] instanceof Cls).toEqual(true);
+    });
+
+    it('returns with meta data on _meta', function() {
+      ResourceCollection._itemsField = 'items';
+      var response = {data: {meta: {a: 'b'}, items: [1, 2]}};
+      var rc = ResourceCollection.build(Cls, response);
+      expect(rc._meta).toEqual({a: 'b'});
+      expect(rc[0] instanceof Cls).toEqual(true);
+    });
+  });
+
 });
 
 describe('ResourceCollection User use case', function() {
@@ -90,12 +161,6 @@ describe('ResourceCollection User use case', function() {
 
     beforeEach(function() {
       collection = MyAPICollection.build(User, {data: testData.userCollectionData});
-    });
-
-    describe('query method', function() {
-      it('exists', function() {
-        expect(angular.isFunction(collection.query)).toEqual(true);
-      });
     });
 
     describe('hasNext method', function() {
