@@ -77,14 +77,14 @@ angular.module('thickm.resource')
       }
 
       // The endpoint name, i.e. 'items' in `/api/v1/items`
-      Resource.prototype._resourceName = 'item';
+      Resource.prototype._resourceName = 'items';
 
       // The field of an item to do lookups by
       Resource.prototype._primaryField = 'id';
 
       // The Resource's collection class, i.e. the class used to represent a
       // collection of items.
-      Resource.prototype._collectionClass = ResourceCollection;
+      Resource._collectionClass = ResourceCollection;
 
       /**
        * @ngdoc function
@@ -130,7 +130,7 @@ angular.module('thickm.resource')
        * @return {string} The collection URL
        */
       Resource.prototype.getCollectionUrl = function() {
-        return provider.baseUrl + this._resourceName;
+        return (provider.baseUrl || '/') + this._resourceName;
       };
 
       /**
@@ -208,7 +208,7 @@ angular.module('thickm.resource')
        */
       Resource.queryUrl = function(url, params) {
         var _self = this;
-        var promise = $http.get(url, { params: params ? params : null })
+        var promise = $http.get(url, params ? {params:params} : undefined)
             .then(function(response) {
               return _self.transformCollectionResponse(response);
             });
@@ -243,7 +243,7 @@ angular.module('thickm.resource')
        */
       Resource.getUrl = function(url, params) {
         var _self = this;
-        var promise = $http.get(url, { params: params ? params : null})
+        var promise = $http.get(url, params ? {params:params} : undefined)
             .then(function(response) {
               return _self.transformItemResponse(response);
             });
