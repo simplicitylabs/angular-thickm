@@ -6,7 +6,12 @@
     "email": "miberg@silabs.com"
   },
   "description": "Class based REST API interface",
-  "keywords": ["angular", "angularjs", "rest", "resource"],
+  "keywords": [
+    "angular",
+    "angularjs",
+    "rest",
+    "resource"
+  ],
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
@@ -21,7 +26,8 @@
     "karma-chrome-launcher": "~0.1.4",
     "karma-phantomjs-launcher": "^0.1.4",
     "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-uglify": "^0.5.1"
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-docular": "^0.1.4"
   },
   "engines": {
     "node": ">=0.8.0"

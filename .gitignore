@@ -5,6 +5,7 @@
 .idea
 .project
 .settings
+docs/
 
 # Ignore node stuff
 node_modules/

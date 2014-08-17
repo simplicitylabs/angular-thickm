@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
   'use strict';
 
+  grunt.loadNpmTasks('grunt-docular');
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
@@ -14,7 +16,6 @@ module.exports = function (grunt) {
       },
       library: {
         src: [
-        // 'src/thickm/thickm.prefix',
         'src/**/*.module.js',
         'src/**/*.provider.js',
         'src/**/*.factory.js',
@@ -63,6 +64,31 @@ module.exports = function (grunt) {
       'src/**/*'
       ],
       tasks: ['default']
+    },
+    docular: {
+      useHtml5Mode: false,
+      'docular_webapp_target': '/docs',
+      showAngularDocs: false,
+      showDocularDocs: true,
+      examples: {},
+      groups: [
+        {
+          groupTitle: 'Thickm Docs',
+          groupId: 'thickm',
+          sections: [
+            {
+              id: 'resource',
+              title: 'Resource',
+              scripts: [
+                'src/thickm/resource/resource.module.js',
+                'src/thickm/resource/resource.provider.js'
+              ],
+              docs: [],
+              rank: {}
+            }
+          ]
+        }
+      ]
     }
   });
 
@@ -75,8 +101,9 @@ module.exports = function (grunt) {
     'jshint:beforeConcat',
     'concat',
     'jshint:afterConcat',
-    'uglify'
+    'uglify',
   ]);
   grunt.registerTask('livereload', ['default', 'watch']);
+  grunt.registerTask('docs', ['docular']);
 
 };
