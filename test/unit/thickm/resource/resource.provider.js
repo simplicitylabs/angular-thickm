@@ -198,6 +198,31 @@ describe('Resource', function() {
     });
   });
 
+  describe('extend', function() {
+    var Cls, cls;
+    beforeEach(function() {
+      Cls = function Cls(){};
+      Resource.extend(Cls);
+      cls = new Cls();
+    });
+
+    it('extends prototype', function() {
+      expect(angular.isFunction(cls.getCollectionUrl)).toEqual(true);
+    });
+
+    it('copies static functions functions', function() {
+      expect(angular.isFunction(Cls.extend)).toEqual(true);
+    });
+
+    it('result is still instance of Resource', function() {
+      expect(cls instanceof Resource).toEqual(true);
+    });
+
+    it('result is also instance of Cls', function() {
+      expect(cls instanceof Cls).toEqual(true);
+    });
+  });
+
   describe('prototype', function() {
     var r;
     var ResourceCollection;

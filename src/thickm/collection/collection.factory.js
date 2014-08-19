@@ -36,6 +36,11 @@ angular.module('thickm.collection')
     return rc;
   };
 
+  ResourceCollection.extend = function(subclass) {
+    ThickmUtil.extend(subclass, this);
+    angular.extend(subclass, this);
+  };
+
   return ResourceCollection;
 
 });

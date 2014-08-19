@@ -99,13 +99,11 @@ usersModule.config(function(ResourceProvider) {
 });
 
 // Define ApiCollection factory
-usersModule.factory('MyAPICollection', function(ResourceCollection, ThickmUtil) {
+usersModule.factory('MyAPICollection', function(ResourceCollection) {
   function MyAPICollection() {
 
   }
-
-  ThickmUtil.extend(MyAPICollection, ResourceCollection);
-  angular.extend(MyAPICollection, ResourceCollection);
+  ResourceCollection.extend(MyAPICollection);
 
   MyAPICollection._itemsField = '_items';
   MyAPICollection._metaField = '_meta';
@@ -118,15 +116,13 @@ usersModule.factory('MyAPICollection', function(ResourceCollection, ThickmUtil) 
 });
 
 // Define users factory
-usersModule.factory('User', function(Resource, MyAPICollection, ThickmUtil) {
+usersModule.factory('User', function(Resource, MyAPICollection) {
 
   function User(data) {
     this._primaryField = '_id';
     angular.extend(this, data);
   }
-  // var Resource = resourceFactory();
-  ThickmUtil.extend(User, Resource);
-  angular.extend(User, Resource);
+  Resource.extend(User);
 
   User._collectionClass = MyAPICollection;
   User.prototype._resourceName = 'users';

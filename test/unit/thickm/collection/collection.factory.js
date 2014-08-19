@@ -122,6 +122,27 @@ describe('ResourceCollection', function() {
     });
   });
 
+  describe('extend', function() {
+    var Cls, cls;
+    beforeEach(function() {
+      Cls = function Cls(){};
+      ResourceCollection.extend(Cls);
+      cls = new Cls();
+    });
+
+    it('copies static functions functions', function() {
+      expect(angular.isFunction(Cls.extend)).toEqual(true);
+    });
+
+    it('result is still instance of ResourceCollection', function() {
+      expect(cls instanceof ResourceCollection).toEqual(true);
+    });
+
+    it('result is also instance of Cls', function() {
+      expect(cls instanceof Cls).toEqual(true);
+    });
+  });
+
 });
 
 describe('ResourceCollection User use case', function() {

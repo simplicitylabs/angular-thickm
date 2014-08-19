@@ -80,7 +80,7 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q, ResourceCollection) {
+  this.$get = function($http, $q, ResourceCollection, ThickmUtil) {
 
       /**
        * @ngdoc service
@@ -377,6 +377,26 @@ angular.module('thickm.resource')
         }
       };
 
+      /**
+       * @ngdoc function
+       * @name resource.Resource.extend
+       * @propertyOf resource.Resource
+       * @description
+       * Extend this class with both static and prototype. Example:
+       *
+       * ```javascript
+       * function MyClass(data) {
+       *   Resource.call(this, data);
+       * }
+       *
+       * Resource.extend(MyClass);
+       * ```
+       */
+      Resource.extend = function(subclass) {
+        ThickmUtil.extend(subclass, this);
+        angular.extend(subclass, this);
+      };
+
       return Resource;
     };
 
@@ -416,6 +436,11 @@ angular.module('thickm.collection')
     rc._meta = this.metaFromResponse(cls, response);
 
     return rc;
+  };
+
+  ResourceCollection.extend = function(subclass) {
+    ThickmUtil.extend(subclass, this);
+    angular.extend(subclass, this);
   };
 
   return ResourceCollection;
