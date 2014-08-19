@@ -17,8 +17,7 @@ angular.module('thickm.resource', ['thickm.collection', 'thickm.util']);
 // Source: src/thickm/thickm.module.js
 angular.module('thickm', [
   'thickm.resource',
-  'thickm.collection',
-  'thickm.util'
+  'thickm.collection'
 ]);
 // Source: src/thickm/util/util.module.js
 angular.module('thickm.util', []);

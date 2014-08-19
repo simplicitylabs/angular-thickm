@@ -2,6 +2,5 @@
 
 angular.module('thickm', [
   'thickm.resource',
-  'thickm.collection',
-  'thickm.util'
+  'thickm.collection'
 ]);
