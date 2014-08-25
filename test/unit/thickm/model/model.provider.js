@@ -31,17 +31,17 @@ beforeEach(function() {
 /**
  * Provider tests
  */
-describe('thickm resourceFactoryProvider', function() {
+describe('thickm ThickModelPovider', function() {
 
   var provider;
 
   beforeEach(function() {
     var fakeModule = angular.module('fakeModule', function() {});
-    fakeModule.config(function(ResourceProvider) {
-      provider = ResourceProvider;
+    fakeModule.config(function(ThickModelProvider) {
+      provider = ThickModelProvider;
     });
 
-    module('thickm.resource', 'fakeModule');
+    module('thickm.model', 'fakeModule');
 
     inject(function() {});
   });
@@ -59,11 +59,11 @@ describe('thickm resourceFactoryProvider', function() {
  */
 describe('thickm resourceFactory', function() {
 
-  beforeEach(module('thickm.resource'));
+  beforeEach(module('thickm.model'));
 
-  var resourceFactory;
-  beforeEach(inject(function(_resourceFactory_) {
-    resourceFactory = _resourceFactory_;
+  var ThickModelProvider;
+  beforeEach(inject(function(_ThickModelProvider_) {
+    ThickModelProvider = _ThickModelProvider_;
   }));
 
 });
@@ -72,45 +72,45 @@ describe('thickm resourceFactory', function() {
  * Direct tests
  */
 describe('Resource', function() {
-  beforeEach(module('thickm.resource'));
+  beforeEach(module('thickm.model'));
 
-  var Resource, $http, $q;
-  beforeEach(inject(function(_Resource_, _$http_, _$q_) {
-    Resource = _Resource_;
+  var ThickModel, $http, $q;
+  beforeEach(inject(function(_ThickModel_, _$http_, _$q_) {
+    ThickModel = _ThickModel_;
     $http = _$http_;
     $q = _$q_;
   }));
 
   describe('constructor', function() {
     it('can run without arguments', function() {
-      var r = new Resource();
-      expect(r instanceof Resource).toEqual(true);
+      var r = new ThickModel();
+      expect(r instanceof ThickModel).toEqual(true);
     });
 
     it('copies properties from passed object', function() {
-      var r = new Resource({prop: 'val'});
+      var r = new ThickModel({prop: 'val'});
       expect(r.prop).toEqual('val');
     });
   });
 
   describe('validate', function() {
     it('returns true when passed an object', function() {
-      expect(Resource.validate({})).toEqual(true);
+      expect(ThickModel.validate({})).toEqual(true);
     });
 
     it('returns false when passed non-object', function() {
-      expect(Resource.validate('')).toEqual(false);
+      expect(ThickModel.validate('')).toEqual(false);
     });
   });
 
   describe('build', function() {
     it('returns resource instance when passed object', function() {
-      expect(Resource.build({}) instanceof Resource).toEqual(true);
+      expect(ThickModel.build({}) instanceof ThickModel).toEqual(true);
     });
 
     it('throws when passed non-object', function() {
       expect(function() {
-        return Resource.build('');
+        return ThickModel.build('');
       }).toThrow();
     });
   });
@@ -121,7 +121,7 @@ describe('Resource', function() {
       spyOn(ResourceCollection, 'build').andCallFake(function() {
         return new ResourceCollection();
       });
-      var c = Resource.transformCollectionResponse({});
+      var c = ThickModel.transformCollectionResponse({});
       expect(c instanceof ResourceCollection).toEqual(true);
       expect(ResourceCollection.build).toHaveBeenCalled();
     }));
@@ -129,12 +129,12 @@ describe('Resource', function() {
 
   describe('transformItemResponse', function() {
     it('builds from response with own build', function() {
-      spyOn(Resource, 'build').andCallFake(function() {
-        return new Resource();
+      spyOn(ThickModel, 'build').andCallFake(function() {
+        return new ThickModel();
       });
-      var f = Resource.transformItemResponse({});
-      expect(f instanceof Resource).toEqual(true);
-      expect(Resource.build).toHaveBeenCalled();
+      var f = ThickModel.transformItemResponse({});
+      expect(f instanceof ThickModel).toEqual(true);
+      expect(ThickModel.build).toHaveBeenCalled();
     });
   });
 
@@ -148,13 +148,13 @@ describe('Resource', function() {
     });
 
     it('sends HTTP query to specified URL', function() {
-      var p = Resource.queryUrl(fakeUrl);
+      var p = ThickModel.queryUrl(fakeUrl);
       expect(p).toBeSuccessErrorPromise();
       expect($http.get).toHaveBeenCalledWith(fakeUrl, undefined);
     });
 
     it('sends HTTP parameters', function() {
-      var p = Resource.queryUrl(fakeUrl, {a: 'b'});
+      var p = ThickModel.queryUrl(fakeUrl, {a: 'b'});
       expect(p).toBeSuccessErrorPromise();
       expect($http.get).toHaveBeenCalledWith(fakeUrl, {params:{a: 'b'}});
     });
@@ -162,9 +162,9 @@ describe('Resource', function() {
 
   describe('query', function() {
     it('calls queryUrl with collectionUrl and parameters', function() {
-      spyOn(Resource, 'queryUrl');
-      Resource.query({a: 'b'});
-      expect(Resource.queryUrl).toHaveBeenCalledWith('/items', {a: 'b'});
+      spyOn(ThickModel, 'queryUrl');
+      ThickModel.query({a: 'b'});
+      expect(ThickModel.queryUrl).toHaveBeenCalledWith('/items', {a: 'b'});
     });
   });
 
@@ -178,13 +178,13 @@ describe('Resource', function() {
     });
 
     it('sends HTTP query to specified URL', function() {
-      var p = Resource.getUrl(fakeUrl);
+      var p = ThickModel.getUrl(fakeUrl);
       expect(p).toBeSuccessErrorPromise();
       expect($http.get).toHaveBeenCalledWith(fakeUrl, undefined);
     });
 
     it('sends HTTP parameters', function() {
-      var p = Resource.getUrl(fakeUrl, {a: 'b'});
+      var p = ThickModel.getUrl(fakeUrl, {a: 'b'});
       expect(p).toBeSuccessErrorPromise();
       expect($http.get).toHaveBeenCalledWith(fakeUrl, {params:{a: 'b'}});
     });
@@ -192,9 +192,9 @@ describe('Resource', function() {
 
   describe('get', function() {
     it('calls getUrl with itemUrl and parameters', function() {
-      spyOn(Resource, 'getUrl');
-      Resource.get(1, {a: 'b'});
-      expect(Resource.getUrl).toHaveBeenCalledWith('/items/1', {a: 'b'});
+      spyOn(ThickModel, 'getUrl');
+      ThickModel.get(1, {a: 'b'});
+      expect(ThickModel.getUrl).toHaveBeenCalledWith('/items/1', {a: 'b'});
     });
   });
 
@@ -202,7 +202,7 @@ describe('Resource', function() {
     var Cls, cls;
     beforeEach(function() {
       Cls = function Cls(){};
-      Resource.extend(Cls);
+      ThickModel.extend(Cls);
       cls = new Cls();
     });
 
@@ -215,7 +215,7 @@ describe('Resource', function() {
     });
 
     it('result is still instance of Resource', function() {
-      expect(cls instanceof Resource).toEqual(true);
+      expect(cls instanceof ThickModel).toEqual(true);
     });
 
     it('result is also instance of Cls', function() {
@@ -227,7 +227,7 @@ describe('Resource', function() {
     var r;
     var ResourceCollection;
     beforeEach(inject(function(_ResourceCollection_) {
-      r = new Resource();
+      r = new ThickModel();
       ResourceCollection = _ResourceCollection_;
     }));
 
@@ -349,7 +349,7 @@ describe('Resource', function() {
       it('is still a Resource after save', function() {
         r[r._primaryField] = 1;
         r.save().then(function() {
-          expect(r instanceof Resource).toEqual(true);
+          expect(r instanceof ThickModel).toEqual(true);
         });
       });
     });
@@ -396,7 +396,7 @@ describe('User use case', function() {
 
   // Set up the module to test
   beforeEach(function() {
-    module('thickm.resource', 'users');
+    module('thickm.model', 'users');
     inject(function() {});
   });
 

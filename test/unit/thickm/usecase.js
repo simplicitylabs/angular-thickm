@@ -94,8 +94,8 @@ var usersModule = angular.module('users', ['thickm']);
 })();
 
 // Config sep
-usersModule.config(function(ResourceProvider) {
-  ResourceProvider.setBaseUrl('http://coolapp.com/api/v1/');
+usersModule.config(function(ThickModelProvider) {
+  ThickModelProvider.setBaseUrl('http://coolapp.com/api/v1/');
 });
 
 // Define ApiCollection factory
@@ -116,13 +116,13 @@ usersModule.factory('MyAPICollection', function(ResourceCollection) {
 });
 
 // Define users factory
-usersModule.factory('User', function(Resource, MyAPICollection) {
+usersModule.factory('User', function(ThickModel, MyAPICollection) {
 
   function User(data) {
     this._primaryField = '_id';
     angular.extend(this, data);
   }
-  Resource.extend(User);
+  ThickModel.extend(User);
 
   User._collectionClass = MyAPICollection;
   User.prototype._resourceName = 'users';

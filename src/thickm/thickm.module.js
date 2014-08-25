@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('thickm', [
-  'thickm.resource',
+  'thickm.model',
   'thickm.collection'
 ]);
