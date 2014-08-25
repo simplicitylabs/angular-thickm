@@ -14,7 +14,7 @@ angular.module('thickm.model')
 
   /**
    * @ngdoc method
-   * @name model.ThickmModelProvider.setBaseUrl
+   * @name model.ThickModelProvider.setBaseUrl
    * @description
    * Set the base URL for the API, e.g. `http://example.com/api/v1/` for an
    * API which has collections such as `http://example.com/api/v1/users` or
@@ -62,7 +62,7 @@ angular.module('thickm.model')
       /**
        * @ngdoc service
        * @class
-       * @name model.ThickmModel
+       * @name model.ThickModel
        * @description
        *
        * Constructor for the `Model` class, which is the main point of entry
@@ -88,8 +88,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.validate
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.validate
+       * @propertyOf model.ThickModel
        * @description
        * Validate data for a ThickModel.
        *
@@ -102,8 +102,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.build
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.build
+       * @propertyOf model.ThickModel
        * @description
        * ThickModel factory method. Takes data object and uses the `ThickModel`
        * constructor to create a new `ThickModel`. The object is validated with
@@ -121,8 +121,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.prototype.getCollectionUrl
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.prototype.getCollectionUrl
+       * @methodOf model.ThickModel
        * @description
        * Get the collection URL, e.g. `http://example.com/api/v1/users`. Uses
        * base API URL from the provider, `provider.baseUrl` and `_modelName`.
@@ -135,8 +135,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.prototype.getModelUrl
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.prototype.getModelUrl
+       * @methodOf model.ThickModel
        * @description
        * Get the model URL, e.g. `http://example.com/api/v1/users/1337`. Uses
        * `getCollectionUrl()` and `_primaryField`.
@@ -150,8 +150,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.transformCollectionResponse
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.transformCollectionResponse
+       * @methodOf model.ThickModel
        * @description
        * Transform an collection response into an object. Uses the collection
        * class' `build` method to create a collection from the HTTP response.
@@ -165,8 +165,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.transformItemResponse
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.transformItemResponse
+       * @propertyOf model.ThickModel
        * @description
        * Transform an item response into an object. Uses the `build` method to
        * create an instance of `ThickModel` from the HTTP response.
@@ -180,8 +180,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.prototype.transformItemRequest
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.prototype.transformItemRequest
+       * @methodOf model.ThickModel
        * @description
        * Transform an item request. This is also where the headers for a
        * request can be altered in a subclass.
@@ -196,8 +196,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.queryUrl
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.queryUrl
+       * @propertyOf model.ThickModel
        * @description
        * Query a specific URL to get a `ThickModelCollection` (which contains
        * `Model`s).
@@ -218,8 +218,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.query
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.query
+       * @propertyOf model.ThickModel
        * @description
        * Query the default endpoint URL, given by `getCollectionUrl()` to get
        * an instance of `ThickModelCollection`.
@@ -234,8 +234,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.getUrl
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.getUrl
+       * @propertyOf model.ThickModel
        * @description
        * Get one `ThickModel` from a specific URL.
        *
@@ -254,8 +254,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.get
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.get
+       * @propertyOf model.ThickModel
        * @description
        * Get one model given by its primary field, `_primaryField`.
        *
@@ -269,8 +269,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.isNew
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.isNew
+       * @methodOf model.ThickModel
        * @description
        * Determines if the `ThickModel` is "new", i.e. it doesn't exist on the
        * API.
@@ -284,8 +284,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.update
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.update
+       * @methodOf model.ThickModel
        * @description
        * Update the `ThickModel` with new data from the object passed in.
        *
@@ -297,8 +297,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.save
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.save
+       * @methodOf model.ThickModel
        * @description
        * Saves the `ThickModel` to the API, via a POST to the collection
        * endpoint if the `ThickModel` is new, or a PUT to the item endpoint if
@@ -337,8 +337,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.delete
-       * @methodOf model.ThickmModelProvider
+       * @name model.ThickModel.delete
+       * @methodOf model.ThickModel
        * @description
        * Delete the `ThickModel` on the API side with a DELETE to the item
        * endpoint.
@@ -361,8 +361,8 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickmModelProvider.extend
-       * @propertyOf model.ThickmModelProvider
+       * @name model.ThickModel.extend
+       * @propertyOf model.ThickModel
        * @description
        * Extend this class with both static and prototype. Example:
        *

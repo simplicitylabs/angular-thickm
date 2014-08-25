@@ -64,31 +64,6 @@ module.exports = function (grunt) {
       'src/**/*'
       ],
       tasks: ['default']
-    },
-    docular: {
-      useHtml5Mode: false,
-      'docular_webapp_target': '/docs',
-      showAngularDocs: false,
-      showDocularDocs: true,
-      examples: {},
-      groups: [
-        {
-          groupTitle: 'Thickm Docs',
-          groupId: 'thickm',
-          sections: [
-            {
-              id: 'thickmodel',
-              title: 'ThickModel',
-              scripts: [
-                'src/thickm/model/model.module.js',
-                'src/thickm/model/model.provider.js'
-              ],
-              docs: [],
-              rank: {}
-            }
-          ]
-        }
-      ]
     }
   });
 
@@ -104,6 +79,5 @@ module.exports = function (grunt) {
     'uglify',
   ]);
   grunt.registerTask('livereload', ['default', 'watch']);
-  grunt.registerTask('docs', ['docular']);
 
 };
