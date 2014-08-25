@@ -103,13 +103,13 @@ describe('ThickModel', function() {
 
   describe('transformCollectionResponse', function() {
     it('builds from response with collection class\' build',
-        inject(function(ResourceCollection) {
-      spyOn(ResourceCollection, 'build').andCallFake(function() {
-        return new ResourceCollection();
+        inject(function(ThickModelCollection) {
+      spyOn(ThickModelCollection, 'build').andCallFake(function() {
+        return new ThickModelCollection();
       });
       var c = ThickModel.transformCollectionResponse({});
-      expect(c instanceof ResourceCollection).toEqual(true);
-      expect(ResourceCollection.build).toHaveBeenCalled();
+      expect(c instanceof ThickModelCollection).toEqual(true);
+      expect(ThickModelCollection.build).toHaveBeenCalled();
     }));
   });
 
@@ -211,10 +211,10 @@ describe('ThickModel', function() {
 
   describe('prototype', function() {
     var r;
-    var ResourceCollection;
-    beforeEach(inject(function(_ResourceCollection_) {
+    var ThickModelCollection;
+    beforeEach(inject(function(_ThickModelCollection_) {
       r = new ThickModel();
-      ResourceCollection = _ResourceCollection_;
+      ThickModelCollection = _ThickModelCollection_;
     }));
 
     describe('values', function() {
@@ -226,9 +226,9 @@ describe('ThickModel', function() {
         expect(r._primaryField).toEqual('id');
       });
 
-      // it('has ResourceCollection as _collectionClass',
-      //     inject(function(ResourceCollection) {
-      //   expect(r._collectionClass).toBe(ResourceCollection);
+      // it('has ThickModelCollection as _collectionClass',
+      //     inject(function(ThickModelCollection) {
+      //   expect(r._collectionClass).toBe(ThickModelCollection);
       // }));
     });
 

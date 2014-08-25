@@ -99,11 +99,11 @@ usersModule.config(function(ThickModelProvider) {
 });
 
 // Define ApiCollection factory
-usersModule.factory('MyAPICollection', function(ResourceCollection) {
+usersModule.factory('MyAPICollection', function(ThickModelCollection) {
   function MyAPICollection() {
 
   }
-  ResourceCollection.extend(MyAPICollection);
+  ThickModelCollection.extend(MyAPICollection);
 
   MyAPICollection._itemsField = '_items';
   MyAPICollection._metaField = '_meta';

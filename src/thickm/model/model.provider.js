@@ -57,7 +57,7 @@ angular.module('thickm.model')
     return promise;
   }
 
-  this.$get = function($http, $q, ResourceCollection, ThickmUtil) {
+  this.$get = function($http, $q, ThickModelCollection, ThickmUtil) {
 
       /**
        * @ngdoc service
@@ -84,7 +84,7 @@ angular.module('thickm.model')
 
       // The ThickModel's collection class, i.e. the class used to represent a
       // collection of items.
-      ThickModel._collectionClass = ResourceCollection;
+      ThickModel._collectionClass = ThickModelCollection;
 
       /**
        * @ngdoc function
@@ -199,12 +199,13 @@ angular.module('thickm.model')
        * @name model.ThickmModelProvider.queryUrl
        * @propertyOf model.ThickmModelProvider
        * @description
-       * Query a specific URL to get a `ResourceCollection` (which contains
+       * Query a specific URL to get a `ThickModelCollection` (which contains
        * `Model`s).
        *
        * @param {string} url    The URL to query
        * @param {Object} params Additional URL parameters
-       * @returns {promise|ResourceCollection} Instance of `ResourceCollection`
+       * @returns {promise|ThickModelCollection} Instance of
+       * `ThickModelCollection`
        */
       ThickModel.queryUrl = function(url, params) {
         var _self = this;
@@ -221,10 +222,11 @@ angular.module('thickm.model')
        * @propertyOf model.ThickmModelProvider
        * @description
        * Query the default endpoint URL, given by `getCollectionUrl()` to get
-       * an instance of `ResourceCollection`.
+       * an instance of `ThickModelCollection`.
        *
        * @param {Object} params Additional URL paramters
-       * @returns {promise|ResourceCollection} Instance of `ResourceCollection`
+       * @returns {promise|ThickModelCollection} Instance of
+       * `ThickModelCollection`
        */
       ThickModel.query = function(params) {
         return this.queryUrl(this.prototype.getCollectionUrl(), params);
