@@ -1,17 +1,23 @@
 {
   "name": "angular-thickm",
-  "version": "0.0.1-dev",
-  "author": {
-    "name": "Mikael Berg",
-    "email": "miberg@silabs.com"
-  },
-  "description": "Class based REST API interface",
+  "version": "0.0.1",
+  "authors": [
+    {
+      "name": "Mikael Berg",
+      "email": "miberg@silabs.com"
+    }
+  ],
+  "description": "Class based REST API library",
   "keywords": [
     "angular",
     "angularjs",
     "rest",
     "resource"
   ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/simplicitylabs/angular-thickm.git"
+  },
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
