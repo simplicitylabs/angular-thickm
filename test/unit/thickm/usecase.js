@@ -15,9 +15,9 @@ var usersModule = angular.module('users', ['thickm']);
 
 (function() {
   var baseUrl = 'http://coolapp.com/api/v1/';
-  var resourceName = 'users';
+  var modelName = 'users';
 
-  var collectionUrl = baseUrl + resourceName;
+  var collectionUrl = baseUrl + modelName;
   var userCollectionData = {
     _items: Array.apply(null, new Array(25)).map(randomUserData),
     _meta: { total: 73, page: 1, max_results: 25 }
@@ -29,7 +29,7 @@ var usersModule = angular.module('users', ['thickm']);
 
   usersModule.value('testData', {
     baseUrl: baseUrl,
-    resourceName: resourceName,
+    modelName: modelName,
     collectionUrl: collectionUrl,
     userCollectionData: userCollectionData,
     knownUserData: knownUserData,

@@ -77,11 +77,11 @@ module.exports = function (grunt) {
           groupId: 'thickm',
           sections: [
             {
-              id: 'resource',
-              title: 'Resource',
+              id: 'thickmodel',
+              title: 'ThickModel',
               scripts: [
-                'src/thickm/resource/resource.module.js',
-                'src/thickm/resource/resource.provider.js'
+                'src/thickm/model/model.module.js',
+                'src/thickm/model/model.provider.js'
               ],
               docs: [],
               rank: {}

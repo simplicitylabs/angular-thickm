@@ -55,23 +55,9 @@ describe('thickm ThickModelPovider', function() {
 });
 
 /**
- * Factory tests
- */
-describe('thickm resourceFactory', function() {
-
-  beforeEach(module('thickm.model'));
-
-  var ThickModelProvider;
-  beforeEach(inject(function(_ThickModelProvider_) {
-    ThickModelProvider = _ThickModelProvider_;
-  }));
-
-});
-
-/**
  * Direct tests
  */
-describe('Resource', function() {
+describe('ThickModel', function() {
   beforeEach(module('thickm.model'));
 
   var ThickModel, $http, $q;
@@ -104,7 +90,7 @@ describe('Resource', function() {
   });
 
   describe('build', function() {
-    it('returns resource instance when passed object', function() {
+    it('returns thickmodel instance when passed object', function() {
       expect(ThickModel.build({}) instanceof ThickModel).toEqual(true);
     });
 
@@ -214,7 +200,7 @@ describe('Resource', function() {
       expect(angular.isFunction(Cls.extend)).toEqual(true);
     });
 
-    it('result is still instance of Resource', function() {
+    it('result is still instance of ThickModel', function() {
       expect(cls instanceof ThickModel).toEqual(true);
     });
 
@@ -346,7 +332,7 @@ describe('Resource', function() {
         });
       });
 
-      it('is still a Resource after save', function() {
+      it('is still a ThickModel after save', function() {
         r[r._primaryField] = 1;
         r.save().then(function() {
           expect(r instanceof ThickModel).toEqual(true);
@@ -422,7 +408,7 @@ describe('User use case', function() {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('exists and is Resource constructor', function() {
+    it('exists and is ThickModel constructor', function() {
       expect(User).not.toBeUndefined();
       expect((new User()) instanceof User).toEqual(true);
       expect(User.query).not.toBeUndefined();
