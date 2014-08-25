@@ -1,30 +1,31 @@
 'use strict';
 
 angular.module('thickm.collection')
-.factory('ResourceCollection', function resourceCollectionFactory(ThickmUtil) {
+.factory('ThickModelCollection',
+    function ThickModelCollectionFactory(ThickmUtil) {
 
-  function ResourceCollection() {
+  function ThickModelCollection() {
     Array.apply(this, arguments);
   }
-  ThickmUtil.extend(ResourceCollection, Array);
+  ThickmUtil.extend(ThickModelCollection, Array);
 
-  ResourceCollection._itemsField = null;
-  ResourceCollection._metaField = 'meta';
+  ThickModelCollection._itemsField = null;
+  ThickModelCollection._metaField = 'meta';
 
-  ResourceCollection.itemsFromResponse = function(cls, response) {
+  ThickModelCollection.itemsFromResponse = function(cls, response) {
     var data = this._itemsField ?
         response.data[this._itemsField] : response.data;
     return data.map(function(item) { return cls.build(item); });
   };
 
-  ResourceCollection.metaFromResponse = function(cls, response) {
+  ThickModelCollection.metaFromResponse = function(cls, response) {
     return this._metaField ? response.data[this._metaField] : {};
   };
 
-  ResourceCollection.build = function(cls, response) {
+  ThickModelCollection.build = function(cls, response) {
     var rc = new this();
 
-    rc._resourceClass = cls;
+    rc._modelClass = cls;
 
     var items = this.itemsFromResponse(cls, response);
     angular.forEach(items, function(item) {
@@ -36,11 +37,11 @@ angular.module('thickm.collection')
     return rc;
   };
 
-  ResourceCollection.extend = function(subclass) {
+  ThickModelCollection.extend = function(subclass) {
     ThickmUtil.extend(subclass, this);
     angular.extend(subclass, this);
   };
 
-  return ResourceCollection;
+  return ThickModelCollection;
 
 });

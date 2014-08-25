@@ -15,9 +15,9 @@ var usersModule = angular.module('users', ['thickm']);
 
 (function() {
   var baseUrl = 'http://coolapp.com/api/v1/';
-  var resourceName = 'users';
+  var modelName = 'users';
 
-  var collectionUrl = baseUrl + resourceName;
+  var collectionUrl = baseUrl + modelName;
   var userCollectionData = {
     _items: Array.apply(null, new Array(25)).map(randomUserData),
     _meta: { total: 73, page: 1, max_results: 25 }
@@ -29,7 +29,7 @@ var usersModule = angular.module('users', ['thickm']);
 
   usersModule.value('testData', {
     baseUrl: baseUrl,
-    resourceName: resourceName,
+    modelName: modelName,
     collectionUrl: collectionUrl,
     userCollectionData: userCollectionData,
     knownUserData: knownUserData,
@@ -94,16 +94,16 @@ var usersModule = angular.module('users', ['thickm']);
 })();
 
 // Config sep
-usersModule.config(function(ResourceProvider) {
-  ResourceProvider.setBaseUrl('http://coolapp.com/api/v1/');
+usersModule.config(function(ThickModelProvider) {
+  ThickModelProvider.setBaseUrl('http://coolapp.com/api/v1/');
 });
 
 // Define ApiCollection factory
-usersModule.factory('MyAPICollection', function(ResourceCollection) {
+usersModule.factory('MyAPICollection', function(ThickModelCollection) {
   function MyAPICollection() {
 
   }
-  ResourceCollection.extend(MyAPICollection);
+  ThickModelCollection.extend(MyAPICollection);
 
   MyAPICollection._itemsField = '_items';
   MyAPICollection._metaField = '_meta';
@@ -116,16 +116,16 @@ usersModule.factory('MyAPICollection', function(ResourceCollection) {
 });
 
 // Define users factory
-usersModule.factory('User', function(Resource, MyAPICollection) {
+usersModule.factory('User', function(ThickModel, MyAPICollection) {
 
   function User(data) {
     this._primaryField = '_id';
     angular.extend(this, data);
   }
-  Resource.extend(User);
+  ThickModel.extend(User);
 
   User._collectionClass = MyAPICollection;
-  User.prototype._resourceName = 'users';
+  User.prototype._modelName = 'users';
 
   // Instance methods
   User.prototype.fullName = function() {

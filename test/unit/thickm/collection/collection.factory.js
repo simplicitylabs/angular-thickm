@@ -3,30 +3,30 @@
 describe('collection factory', function() {
   beforeEach(module('thickm.collection'));
 
-  var ResourceCollection;
-  beforeEach(inject(function(_ResourceCollection_) {
-    ResourceCollection = _ResourceCollection_;
+  var ThickModelCollection;
+  beforeEach(inject(function(_ThickModelCollection_) {
+    ThickModelCollection = _ThickModelCollection_;
   }));
 
   it('returns a constructor', function() {
-    expect((new ResourceCollection()) instanceof ResourceCollection)
+    expect((new ThickModelCollection()) instanceof ThickModelCollection)
         .toEqual(true);
   });
 });
 
-describe('ResourceCollection', function() {
+describe('ThickModelCollection', function() {
   beforeEach(module('thickm.collection'));
 
-  var ResourceCollection;
-  beforeEach(inject(function(_ResourceCollection_) {
-    ResourceCollection = _ResourceCollection_;
+  var ThickModelCollection;
+  beforeEach(inject(function(_ThickModelCollection_) {
+    ThickModelCollection = _ThickModelCollection_;
   }));
 
   describe('array like', function() {
     var collection;
 
     beforeEach(function() {
-      collection = new ResourceCollection();
+      collection = new ThickModelCollection();
     });
 
     it('has push method', function() {
@@ -54,11 +54,11 @@ describe('ResourceCollection', function() {
 
   describe('fields', function() {
     it('has _itemsField null', function() {
-      expect(ResourceCollection._itemsField).toEqual(null);
+      expect(ThickModelCollection._itemsField).toEqual(null);
     });
 
     it('has _metaField meta', function() {
-      expect(ResourceCollection._metaField).toEqual('meta');
+      expect(ThickModelCollection._metaField).toEqual('meta');
     });
   });
 
@@ -69,17 +69,17 @@ describe('ResourceCollection', function() {
     it('returns array of Cls built with Cls.build when response.data is array', function() {
       var response = {data: [1, 2]};
       spyOn(Cls, 'build').andCallThrough();
-      var items = ResourceCollection.itemsFromResponse(Cls, response);
+      var items = ThickModelCollection.itemsFromResponse(Cls, response);
       expect(items.length).toEqual(2);
       expect(items[0] instanceof Cls).toEqual(true);
       expect(Cls.build).toHaveBeenCalledWith(2);
     });
 
     it('returns array of Cls when response.data is object', function() {
-      ResourceCollection._itemsField = 'items';
+      ThickModelCollection._itemsField = 'items';
       var response = {data: {items: [1, 2]}};
       spyOn(Cls, 'build').andCallThrough();
-      var items = ResourceCollection.itemsFromResponse(Cls, response);
+      var items = ThickModelCollection.itemsFromResponse(Cls, response);
       expect(items.length).toEqual(2);
       expect(items[0] instanceof Cls).toEqual(true);
       expect(Cls.build).toHaveBeenCalledWith(2);
@@ -90,14 +90,14 @@ describe('ResourceCollection', function() {
     function Cls() {}
 
     it('returns empty object when no _metaField defined', function() {
-      ResourceCollection._metaField = undefined;
+      ThickModelCollection._metaField = undefined;
       var response = {data: [1, 2]};
-      expect(ResourceCollection.metaFromResponse(Cls, response)).toEqual({});
+      expect(ThickModelCollection.metaFromResponse(Cls, response)).toEqual({});
     });
 
     it('returns meta object when _metaField defined', function() {
       var response = {data: {meta: {a: 'b'}}};
-      expect(ResourceCollection.metaFromResponse(Cls, response)).toEqual({a: 'b'});
+      expect(ThickModelCollection.metaFromResponse(Cls, response)).toEqual({a: 'b'});
     });
   });
 
@@ -107,16 +107,16 @@ describe('ResourceCollection', function() {
 
     it('returns instance with Cls items', function() {
       var response = {data: [1, 2]};
-      var rc = ResourceCollection.build(Cls, response);
+      var rc = ThickModelCollection.build(Cls, response);
       expect(rc.length).toEqual(2);
-      expect(rc instanceof ResourceCollection).toEqual(true);
+      expect(rc instanceof ThickModelCollection).toEqual(true);
       expect(rc[0] instanceof Cls).toEqual(true);
     });
 
     it('returns with meta data on _meta', function() {
-      ResourceCollection._itemsField = 'items';
+      ThickModelCollection._itemsField = 'items';
       var response = {data: {meta: {a: 'b'}, items: [1, 2]}};
-      var rc = ResourceCollection.build(Cls, response);
+      var rc = ThickModelCollection.build(Cls, response);
       expect(rc._meta).toEqual({a: 'b'});
       expect(rc[0] instanceof Cls).toEqual(true);
     });
@@ -126,7 +126,7 @@ describe('ResourceCollection', function() {
     var Cls, cls;
     beforeEach(function() {
       Cls = function Cls(){};
-      ResourceCollection.extend(Cls);
+      ThickModelCollection.extend(Cls);
       cls = new Cls();
     });
 
@@ -134,8 +134,8 @@ describe('ResourceCollection', function() {
       expect(angular.isFunction(Cls.extend)).toEqual(true);
     });
 
-    it('result is still instance of ResourceCollection', function() {
-      expect(cls instanceof ResourceCollection).toEqual(true);
+    it('result is still instance of ThickModelCollection', function() {
+      expect(cls instanceof ThickModelCollection).toEqual(true);
     });
 
     it('result is also instance of Cls', function() {
@@ -145,7 +145,7 @@ describe('ResourceCollection', function() {
 
 });
 
-describe('ResourceCollection User use case', function() {
+describe('ThickModelCollection User use case', function() {
   var $httpBackend;
   var MyAPICollection;
   var User;
