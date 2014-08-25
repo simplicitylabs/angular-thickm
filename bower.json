@@ -33,6 +33,6 @@
     "angular-mocks": "~1.2.21",
     "angular-scenario": "~1.2.21",
     "Faker": "~1.0.1",
-    "seedrandom": "git@github.com:davidbau/seedrandom.git#2.3.6"
+    "seedrandom": "http://github.com/davidbau/seedrandom.git#2.3.6"
   }
 }
