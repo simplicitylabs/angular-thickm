@@ -77,7 +77,7 @@ angular.module('thickm.model')
       }
 
       // The endpoint name, i.e. 'items' in `/api/v1/items`
-      ThickModel.prototype._resourceName = 'items';
+      ThickModel.prototype._modelName = 'items';
 
       // The field of an item to do lookups by
       ThickModel.prototype._primaryField = 'id';
@@ -125,17 +125,17 @@ angular.module('thickm.model')
        * @methodOf model.ThickmModelProvider
        * @description
        * Get the collection URL, e.g. `http://example.com/api/v1/users`. Uses
-       * base API URL from the provider, `provider.baseUrl` and `_resourceName`.
+       * base API URL from the provider, `provider.baseUrl` and `_modelName`.
        *
        * @return {string} The collection URL
        */
       ThickModel.prototype.getCollectionUrl = function() {
-        return (provider.baseUrl || '/') + this._resourceName;
+        return (provider.baseUrl || '/') + this._modelName;
       };
 
       /**
        * @ngdoc method
-       * @name model.ThickmModelProvider.prototype.getResourceUrl
+       * @name model.ThickmModelProvider.prototype.getModelUrl
        * @methodOf model.ThickmModelProvider
        * @description
        * Get the model URL, e.g. `http://example.com/api/v1/users/1337`. Uses
@@ -144,7 +144,7 @@ angular.module('thickm.model')
        * @param {string} id The ID of the model for which to get the URL
        * @returns {string} The model URL
        */
-      ThickModel.prototype.getResourceUrl = function(id) {
+      ThickModel.prototype.getModelUrl = function(id) {
         return this.getCollectionUrl() + '/' + (id || this[this._primaryField]);
       };
 
@@ -264,7 +264,7 @@ angular.module('thickm.model')
        * @returns {ThickModel} Instance of `ThickModel`
        */
       ThickModel.get = function(id, params) {
-        return this.getUrl(this.prototype.getResourceUrl(id), params);
+        return this.getUrl(this.prototype.getModelUrl(id), params);
       };
 
       /**
@@ -324,7 +324,7 @@ angular.module('thickm.model')
         if (this.isNew()) {
           promise = $http.post(this.getCollectionUrl(), data, config);
         } else {
-          promise = $http.put(this.getResourceUrl(), data, config);
+          promise = $http.put(this.getModelUrl(), data, config);
         }
 
         promise.then(function(response) {
@@ -350,7 +350,7 @@ angular.module('thickm.model')
           var config = {};
           config.headers = angular.copy(provider.headers.delete);
           this.transformItemRequest(config.headers);
-          return successErrorPromise($http.delete(this.getResourceUrl(),
+          return successErrorPromise($http.delete(this.getModelUrl(),
               config));
         } else {
           var deferred = $q.defer();

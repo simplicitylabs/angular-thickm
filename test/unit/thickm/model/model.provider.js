@@ -218,8 +218,8 @@ describe('ThickModel', function() {
     }));
 
     describe('values', function() {
-      it('has _resourceName items', function() {
-        expect(r._resourceName).toEqual('items');
+      it('has _modelName items', function() {
+        expect(r._modelName).toEqual('items');
       });
 
       it('has _primaryfield id', function() {
@@ -233,18 +233,18 @@ describe('ThickModel', function() {
     });
 
     describe('getCollectionUrl', function() {
-      it('returns /._resourceName', function() {
+      it('returns /._modelName', function() {
         expect(r.getCollectionUrl()).toEqual('/items');
       });
     });
 
-    describe('getResourceUrl', function() {
-      it('returns /._resourceName/id for string', function() {
-        expect(r.getResourceUrl('id')).toEqual('/items/id');
+    describe('getModelUrl', function() {
+      it('returns /._modelName/id for string', function() {
+        expect(r.getModelUrl('id')).toEqual('/items/id');
       });
 
-      it('returns /._resourceName/id for int', function() {
-        expect(r.getResourceUrl(1)).toEqual('/items/1');
+      it('returns /._modelName/id for int', function() {
+        expect(r.getModelUrl(1)).toEqual('/items/1');
       });
     });
 
@@ -298,10 +298,10 @@ describe('ThickModel', function() {
         expect($http.post.calls[0].args[0]).toEqual(r.getCollectionUrl());
       });
 
-      it('PUTs to resourceUrl if r is not new', function() {
+      it('PUTs to modelUrl if r is not new', function() {
         r[r._primaryField] = 1;
         expect(r.save()).toBeSuccessErrorPromise();
-        expect($http.put.calls[0].args[0]).toEqual(r.getResourceUrl());
+        expect($http.put.calls[0].args[0]).toEqual(r.getModelUrl());
       });
 
       it('calls gets data/headers via transformItemRequest', function() {
@@ -358,10 +358,10 @@ describe('ThickModel', function() {
         expect($http.delete).toHaveBeenCalled();
       });
 
-      it('DELETEs to resourceUrl', function() {
+      it('DELETEs to modelUrl', function() {
         r[r._primaryField] = 1;
         r.delete();
-        expect($http.delete.calls[0].args[0]).toEqual(r.getResourceUrl());
+        expect($http.delete.calls[0].args[0]).toEqual(r.getModelUrl());
       });
 
       it('has application/json content type', function() {

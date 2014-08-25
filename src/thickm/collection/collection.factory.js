@@ -25,7 +25,7 @@ angular.module('thickm.collection')
   ThickModelCollection.build = function(cls, response) {
     var rc = new this();
 
-    rc._resourceClass = cls;
+    rc._modelClass = cls;
 
     var items = this.itemsFromResponse(cls, response);
     angular.forEach(items, function(item) {

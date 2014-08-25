@@ -2,41 +2,41 @@
   'use strict';
 // Source: src/thickm/collection/collection.module.js
 angular.module('thickm.collection', ['thickm.util']);
-// Source: src/thickm/resource/resource.module.js
+// Source: src/thickm/model/model.module.js
 /**
  * @ngdoc module
- * @name resource
+ * @name model
  * @description
  *
- * ## Resource
+ * ## Model
  *
- * This module houses the Resource provider, which is the main entry point for
- * using the library. 
+ * This module houses the Model provider, which is the main class of the
+ * library.
  */
-angular.module('thickm.resource', ['thickm.collection', 'thickm.util']);
+angular.module('thickm.model', ['thickm.collection', 'thickm.util']);
 // Source: src/thickm/thickm.module.js
 angular.module('thickm', [
-  'thickm.resource',
+  'thickm.model',
   'thickm.collection'
 ]);
 // Source: src/thickm/util/util.module.js
 angular.module('thickm.util', []);
-// Source: src/thickm/resource/resource.provider.js
+// Source: src/thickm/model/model.provider.js
 /**
  * @ngdoc service
- * @name resource.ResourceProvider
+ * @name model.ThickModelProvider
  * @description
  *
  * The main provider for the library, which takes global configuration.
  */
-angular.module('thickm.resource')
-.provider('Resource', function ResourceFactoryProvider() {
+angular.module('thickm.model')
+.provider('ThickModel', function ThickModelProvider() {
 
   var provider = this;
 
   /**
    * @ngdoc method
-   * @name resource.ResourceProvider.setBaseUrl
+   * @name model.ThickmModelProvider.setBaseUrl
    * @description
    * Set the base URL for the API, e.g. `http://example.com/api/v1/` for an
    * API which has collections such as `http://example.com/api/v1/users` or
@@ -79,62 +79,62 @@ angular.module('thickm.resource')
     return promise;
   }
 
-  this.$get = function($http, $q, ResourceCollection, ThickmUtil) {
+  this.$get = function($http, $q, ThickModelCollection, ThickmUtil) {
 
       /**
        * @ngdoc service
        * @class
-       * @name resource.Resource
+       * @name model.ThickmModel
        * @description
        *
-       * Constructor for the `Resource` class, which is the main point of entry
+       * Constructor for the `Model` class, which is the main point of entry
        * for this library. This is the main class to subclass in order to create
        * models for an application, or to create an API-specific super class.
        *
-       * @param {Object} data Data to create the `Resource` from, will be come
-       *                      properties of the new `Resource` object.
+       * @param {Object} data Data to create the `Model` from, will be come
+       *                      properties of the new `Model` object.
        */
-      function Resource(data) {
+      function ThickModel(data) {
         angular.extend(this, data);
       }
 
       // The endpoint name, i.e. 'items' in `/api/v1/items`
-      Resource.prototype._resourceName = 'items';
+      ThickModel.prototype._modelName = 'items';
 
       // The field of an item to do lookups by
-      Resource.prototype._primaryField = 'id';
+      ThickModel.prototype._primaryField = 'id';
 
-      // The Resource's collection class, i.e. the class used to represent a
+      // The ThickModel's collection class, i.e. the class used to represent a
       // collection of items.
-      Resource._collectionClass = ResourceCollection;
+      ThickModel._collectionClass = ThickModelCollection;
 
       /**
        * @ngdoc function
-       * @name resource.Resource.validate
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.validate
+       * @propertyOf model.ThickmModelProvider
        * @description
-       * Validate data for a Resource.
+       * Validate data for a ThickModel.
        *
        * @param {Object} data The data to validate.
        * @returns {boolean} True if the object is valid, false otherwise.
        */
-      Resource.validate = function(data) {
+      ThickModel.validate = function(data) {
         return angular.isObject(data);
       };
 
       /**
        * @ngdoc function
-       * @name resource.Resource.build
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.build
+       * @propertyOf model.ThickmModelProvider
        * @description
-       * Resource factory method. Takes data object and uses the `Resource`
-       * constructor to create a new `Resource`. The object is validated with
+       * ThickModel factory method. Takes data object and uses the `ThickModel`
+       * constructor to create a new `ThickModel`. The object is validated with
        * `validate`. Throws error if the data is invalid.
        *
-       * @param  {Object} data Data for the new Resource.
-       * @return {Object<Resource>} new Resource
+       * @param  {Object} data Data for the new ThickModel.
+       * @return {ThickModel} new ThickModel
        */
-      Resource.build = function(data) {
+      ThickModel.build = function(data) {
         if (!this.validate(data)) {
           throw new Error('invalid item ' + JSON.stringify(data));
         }
@@ -143,37 +143,37 @@ angular.module('thickm.resource')
 
       /**
        * @ngdoc method
-       * @name resource.Resource.prototype.getCollectionUrl
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.prototype.getCollectionUrl
+       * @methodOf model.ThickmModelProvider
        * @description
        * Get the collection URL, e.g. `http://example.com/api/v1/users`. Uses
-       * base API URL from the provider, `provider.baseUrl` and `_resourceName`.
+       * base API URL from the provider, `provider.baseUrl` and `_modelName`.
        *
        * @return {string} The collection URL
        */
-      Resource.prototype.getCollectionUrl = function() {
-        return (provider.baseUrl || '/') + this._resourceName;
+      ThickModel.prototype.getCollectionUrl = function() {
+        return (provider.baseUrl || '/') + this._modelName;
       };
 
       /**
        * @ngdoc method
-       * @name resource.Resource.prototype.getResourceUrl
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.prototype.getModelUrl
+       * @methodOf model.ThickmModelProvider
        * @description
-       * Get the Resource URL, e.g. `http://example.com/api/v1/users/1337`. Uses
+       * Get the model URL, e.g. `http://example.com/api/v1/users/1337`. Uses
        * `getCollectionUrl()` and `_primaryField`.
        *
-       * @param {string} id The ID of the resource for which to get the URL
-       * @returns {string} The resource URL
+       * @param {string} id The ID of the model for which to get the URL
+       * @returns {string} The model URL
        */
-      Resource.prototype.getResourceUrl = function(id) {
+      ThickModel.prototype.getModelUrl = function(id) {
         return this.getCollectionUrl() + '/' + (id || this[this._primaryField]);
       };
 
       /**
        * @ngdoc function
-       * @name resource.Resource.transformCollectionResponse
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.transformCollectionResponse
+       * @methodOf model.ThickmModelProvider
        * @description
        * Transform an collection response into an object. Uses the collection
        * class' `build` method to create a collection from the HTTP response.
@@ -181,29 +181,29 @@ angular.module('thickm.resource')
        * @param {Object<response>} response Response object from `$http`
        * @returns {Object<collection class>} Collection class instance
        */
-      Resource.transformCollectionResponse = function(response) {
+      ThickModel.transformCollectionResponse = function(response) {
         return this._collectionClass.build(this, response);
       };
 
       /**
        * @ngdoc function
-       * @name resource.Resource.transformItemResponse
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.transformItemResponse
+       * @propertyOf model.ThickmModelProvider
        * @description
        * Transform an item response into an object. Uses the `build` method to
-       * create an instance of `Resource` from the HTTP response.
+       * create an instance of `ThickModel` from the HTTP response.
        *
        * @param {Object<response>} response Response object form `$http`.
-       * @returns {Resource} Resource
+       * @returns {ThickModel} ThickModel
        */
-      Resource.transformItemResponse = function(response) {
+      ThickModel.transformItemResponse = function(response) {
         return this.build(response.data);
       };
 
       /**
        * @ngdoc method
-       * @name resource.Resource.prototype.transformItemRequest
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.prototype.transformItemRequest
+       * @methodOf model.ThickmModelProvider
        * @description
        * Transform an item request. This is also where the headers for a
        * request can be altered in a subclass.
@@ -212,23 +212,24 @@ angular.module('thickm.resource')
        * @returns {Object} Object which is sent to API.
        */
       /*jshint unused:false */
-      Resource.prototype.transformItemRequest = function(headers) {
+      ThickModel.prototype.transformItemRequest = function(headers) {
         return this;
       };
 
       /**
        * @ngdoc function
-       * @name resource.Resource.queryUrl
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.queryUrl
+       * @propertyOf model.ThickmModelProvider
        * @description
-       * Query a specific URL to get a `ResourceCollection` (which contains
-       * `Resource`s).
+       * Query a specific URL to get a `ThickModelCollection` (which contains
+       * `Model`s).
        *
        * @param {string} url    The URL to query
        * @param {Object} params Additional URL parameters
-       * @returns {promise|ResourceCollection} Instance of `ResourceCollection`
+       * @returns {promise|ThickModelCollection} Instance of
+       * `ThickModelCollection`
        */
-      Resource.queryUrl = function(url, params) {
+      ThickModel.queryUrl = function(url, params) {
         var _self = this;
         var promise = $http.get(url, params ? {params:params} : undefined)
             .then(function(response) {
@@ -239,31 +240,32 @@ angular.module('thickm.resource')
 
       /**
        * @ngdoc function
-       * @name resource.Resource.query
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.query
+       * @propertyOf model.ThickmModelProvider
        * @description
        * Query the default endpoint URL, given by `getCollectionUrl()` to get
-       * an instance of `ResourceCollection`.
+       * an instance of `ThickModelCollection`.
        *
        * @param {Object} params Additional URL paramters
-       * @returns {promise|ResourceCollection} Instance of `ResourceCollection`
+       * @returns {promise|ThickModelCollection} Instance of
+       * `ThickModelCollection`
        */
-      Resource.query = function(params) {
+      ThickModel.query = function(params) {
         return this.queryUrl(this.prototype.getCollectionUrl(), params);
       };
 
       /**
        * @ngdoc function
-       * @name resource.Resource.getUrl
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.getUrl
+       * @propertyOf model.ThickmModelProvider
        * @description
-       * Get one `Resource` from a specific URL.
+       * Get one `ThickModel` from a specific URL.
        *
        * @param {string} url The URL to get from
        * @param {Object} params Additional URL parameters
-       * @returns {promise|Resource} Instance of `Resource`
+       * @returns {promise|ThickModel} Instance of `ThickModel`
        */
-      Resource.getUrl = function(url, params) {
+      ThickModel.getUrl = function(url, params) {
         var _self = this;
         var promise = $http.get(url, params ? {params:params} : undefined)
             .then(function(response) {
@@ -274,60 +276,63 @@ angular.module('thickm.resource')
 
       /**
        * @ngdoc function
-       * @name resource.Resource.get
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.get
+       * @propertyOf model.ThickmModelProvider
        * @description
-       * Get one resource given by its primary field, `_primaryField`.
+       * Get one model given by its primary field, `_primaryField`.
        *
-       * @param {string} id   The primary field of the `Resource` to get
+       * @param {string} id   The primary field of the `ThickModel` to get
        * @param {Object} params Additional URL parameters
-       * @returns {Resource} Instance of `Resource`
+       * @returns {ThickModel} Instance of `ThickModel`
        */
-      Resource.get = function(id, params) {
-        return this.getUrl(this.prototype.getResourceUrl(id), params);
+      ThickModel.get = function(id, params) {
+        return this.getUrl(this.prototype.getModelUrl(id), params);
       };
 
       /**
        * @ngdoc method
-       * @name resource.Resource.isNew
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.isNew
+       * @methodOf model.ThickmModelProvider
        * @description
-       * Determines if the `Resource` is "new", i.e. it doesn't exist on the
+       * Determines if the `ThickModel` is "new", i.e. it doesn't exist on the
        * API.
        *
-       * @returns {bool} True if the `Resource` is new.
+       * @returns {bool} True if the `ThickModel` is new.
        */
-      Resource.prototype.isNew = function() {
+      ThickModel.prototype.isNew = function() {
         return !((this._primaryField in this) &&
             angular.isDefined(this[this._primaryField]));
       };
 
       /**
        * @ngdoc method
-       * @name resource.Resource.update
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.update
+       * @methodOf model.ThickmModelProvider
        * @description
-       * Update the `Resource` with new data from the object passed in.
+       * Update the `ThickModel` with new data from the object passed in.
        *
        * @param {Object} data Object with new data.
        */
-      Resource.prototype.update = function(data) {
+      ThickModel.prototype.update = function(data) {
         angular.extend(this, data);
       };
 
       /**
        * @ngdoc method
-       * @name resource.Resource.save
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.save
+       * @methodOf model.ThickmModelProvider
        * @description
-       * Saves the `Resource` to the API, via a POST to the collection endpoint
-       * if the `Resource` is new, or a PUT to the item endpoint if not.
+       * Saves the `ThickModel` to the API, via a POST to the collection
+       * endpoint if the `ThickModel` is new, or a PUT to the item endpoint if
+       * not.
        *
-       * Also updates the `Resource` with any data given from the API response.
+       * Also updates the `ThickModel` with any data given from the API
+       * response.
        *
-       * @returns {promise|Resource} New `Resource` based on data from the API.
+       * @returns {promise|ThickModel} New `ThickModel` based on data from the
+       * API.
        */
-      Resource.prototype.save = function() {
+      ThickModel.prototype.save = function() {
         var promise,
             _self = this,
             isNew = this.isNew();
@@ -341,7 +346,7 @@ angular.module('thickm.resource')
         if (this.isNew()) {
           promise = $http.post(this.getCollectionUrl(), data, config);
         } else {
-          promise = $http.put(this.getResourceUrl(), data, config);
+          promise = $http.put(this.getModelUrl(), data, config);
         }
 
         promise.then(function(response) {
@@ -354,20 +359,20 @@ angular.module('thickm.resource')
 
       /**
        * @ngdoc method
-       * @name resource.Resource.delete
-       * @methodOf resource.Resource
+       * @name model.ThickmModelProvider.delete
+       * @methodOf model.ThickmModelProvider
        * @description
-       * Delete the `Resource` on the API side with a DELETE to the item
+       * Delete the `ThickModel` on the API side with a DELETE to the item
        * endpoint.
        *
        * @returns {promise} Promise with data form the API.
        */
-      Resource.prototype.delete = function() {
+      ThickModel.prototype.delete = function() {
         if (!this.isNew()) {
           var config = {};
           config.headers = angular.copy(provider.headers.delete);
           this.transformItemRequest(config.headers);
-          return successErrorPromise($http.delete(this.getResourceUrl(),
+          return successErrorPromise($http.delete(this.getModelUrl(),
               config));
         } else {
           var deferred = $q.defer();
@@ -378,54 +383,55 @@ angular.module('thickm.resource')
 
       /**
        * @ngdoc function
-       * @name resource.Resource.extend
-       * @propertyOf resource.Resource
+       * @name model.ThickmModelProvider.extend
+       * @propertyOf model.ThickmModelProvider
        * @description
        * Extend this class with both static and prototype. Example:
        *
        * ```javascript
        * function MyClass(data) {
-       *   Resource.call(this, data);
+       *   ThickModel.call(this, data);
        * }
        *
-       * Resource.extend(MyClass);
+       * ThickModel.extend(MyClass);
        * ```
        */
-      Resource.extend = function(subclass) {
+      ThickModel.extend = function(subclass) {
         ThickmUtil.extend(subclass, this);
         angular.extend(subclass, this);
       };
 
-      return Resource;
+      return ThickModel;
     };
 
 });
 // Source: src/thickm/collection/collection.factory.js
 angular.module('thickm.collection')
-.factory('ResourceCollection', function resourceCollectionFactory(ThickmUtil) {
+.factory('ThickModelCollection',
+    function ThickModelCollectionFactory(ThickmUtil) {
 
-  function ResourceCollection() {
+  function ThickModelCollection() {
     Array.apply(this, arguments);
   }
-  ThickmUtil.extend(ResourceCollection, Array);
+  ThickmUtil.extend(ThickModelCollection, Array);
 
-  ResourceCollection._itemsField = null;
-  ResourceCollection._metaField = 'meta';
+  ThickModelCollection._itemsField = null;
+  ThickModelCollection._metaField = 'meta';
 
-  ResourceCollection.itemsFromResponse = function(cls, response) {
+  ThickModelCollection.itemsFromResponse = function(cls, response) {
     var data = this._itemsField ?
         response.data[this._itemsField] : response.data;
     return data.map(function(item) { return cls.build(item); });
   };
 
-  ResourceCollection.metaFromResponse = function(cls, response) {
+  ThickModelCollection.metaFromResponse = function(cls, response) {
     return this._metaField ? response.data[this._metaField] : {};
   };
 
-  ResourceCollection.build = function(cls, response) {
+  ThickModelCollection.build = function(cls, response) {
     var rc = new this();
 
-    rc._resourceClass = cls;
+    rc._modelClass = cls;
 
     var items = this.itemsFromResponse(cls, response);
     angular.forEach(items, function(item) {
@@ -437,12 +443,12 @@ angular.module('thickm.collection')
     return rc;
   };
 
-  ResourceCollection.extend = function(subclass) {
+  ThickModelCollection.extend = function(subclass) {
     ThickmUtil.extend(subclass, this);
     angular.extend(subclass, this);
   };
 
-  return ResourceCollection;
+  return ThickModelCollection;
 
 });
 // Source: src/thickm/util/util.factory.js

@@ -125,7 +125,7 @@ usersModule.factory('User', function(ThickModel, MyAPICollection) {
   ThickModel.extend(User);
 
   User._collectionClass = MyAPICollection;
-  User.prototype._resourceName = 'users';
+  User.prototype._modelName = 'users';
 
   // Instance methods
   User.prototype.fullName = function() {
