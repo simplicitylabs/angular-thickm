@@ -17,8 +17,8 @@ describe('', function() {
     dependencies = module.requires;
   });
 
-  it('should load resource module', function() {
-    expect(hasModule('thickm.resource')).toBeTruthy();
+  it('should load model module', function() {
+    expect(hasModule('thickm.model')).toBeTruthy();
   });
 
   it('should load collection module', function() {

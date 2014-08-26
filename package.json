@@ -1,6 +1,6 @@
 {
   "name": "angular-thickm",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "authors": [
     {
       "name": "Mikael Berg",
@@ -12,7 +12,7 @@
     "angular",
     "angularjs",
     "rest",
-    "resource"
+    "model"
   ],
   "repository": {
     "type": "git",
@@ -30,12 +30,14 @@
     "karma": "~0.12",
     "karma-jasmine": "~0.1.5",
     "karma-chrome-launcher": "~0.1.4",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-uglify": "^0.5.1",
-    "grunt-docular": "^0.1.4"
+    "karma-phantomjs-launcher": "0.1.4",
+    "grunt-contrib-concat": "0.5.0",
+    "grunt-contrib-uglify": "0.5.1"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start karma-unit.conf.js --single-run"
   }
 }

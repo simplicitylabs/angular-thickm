@@ -13,7 +13,7 @@ describe('', function() {
   beforeEach(function() {
 
     // Get module
-    module = angular.module('thickm.resource');
+    module = angular.module('thickm.model');
     dependencies = module.requires;
   });
 
