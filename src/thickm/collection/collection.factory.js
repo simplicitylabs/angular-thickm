@@ -94,8 +94,8 @@ angular.module('thickm.collection')
    * Extend this class with both static and prototype. Example:
    *
    * ```javascript
-   * function MyClass(data) {
-   *   ThickModelCollection.call(this, data);
+   * function MyClass() {
+   *   ThickModelCollection.call(this, arguments);
    * }
    *
    * ThickModelCollection.extend(MyClass);
