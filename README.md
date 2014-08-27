@@ -89,6 +89,10 @@ usage in question, or specialized error handling.
 Compatibility is created by overwriting properties or methods of the
 `ThickModel` baseclass.
 
+A full implementation of an API compatibility layer with etags can be found
+at [angular-evening](https://github.com/simplicitylabs/angular-evening), a
+library implemented for APIs created with the Python library Eve.
+
 ```javascript
 /* These classes implement a minimal API compatibility layer, which can be
  * specific to your app or a stand-alone library facilitating apps for the
@@ -362,7 +366,8 @@ MyModelCollection.prototype.hasMore = function() {
 
 ## Open source finished API compatibility layers
 
-Coming soon ...
+ - [angular-evening](https://github.com/simplicitylabs/angular-evening) for the
+ Python REST framework *Eve*
 
 ## Contributing
 
