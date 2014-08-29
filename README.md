@@ -25,7 +25,7 @@ Wouldn't it be cool to have models like this?
 ```javascript
 Flight.query({from: 'New York', to: 'London'}).then(function(flights) {
   console.log(flights.length); // outputs 8
-  flights.getAvailableSeats(); // outputs 324
+  console.log(flights.getAvailableSeats()); // outputs 324
 
   // ...
 
