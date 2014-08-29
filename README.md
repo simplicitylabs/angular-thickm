@@ -3,6 +3,16 @@ ThickM
 
 [![Build Status](https://travis-ci.org/simplicitylabs/angular-thickm.svg?branch=develop)](https://travis-ci.org/simplicitylabs/angular-thickm)
 
+Super quick examples:
+
+ - GitHub Gist browsing app: App with simplified GitHub API layer
+    [code](http://jsfiddle.net/tk0j5s0t/8/) |
+    [fullscreen](http://jsfiddle.net/tk0j5s0t/8/embedded/result/)
+ - Super simple issue-browsing: Minimal app to browse AngularJS issues
+    [code](http://jsfiddle.net/b0s21s44/)
+
+## Introduction
+
 ThickM is a simplistic library for AngularJS which takes a class based approach
 to building model layers communicating with REST services. This is perfect for
 building rich ("thick"), extendable models with domain logic in the form of
@@ -45,7 +55,7 @@ more time for good measure. The layers are:
  - API specific compatibility layer
  - ThickM
 
-Let's go though them from the top down
+Let's go though them from the top down:
 
 ### Your models
 
@@ -63,7 +73,7 @@ angular.module('myApp.model.plane')
   }
 
   MyApiModel.extend(Plane); // extend parent class
-  Plane.prototype._resourceName = 'planes'; // goes in the URLs
+  Plane.prototype._modelName = 'planes'; // goes in the URLs
 
   // Possibly overwrite or add methods here ...
 
@@ -87,7 +97,7 @@ It can also have its own logic and methods, which makes sense for the API or
 usage in question, or specialized error handling.
 
 Compatibility is created by overwriting properties or methods of the
-`ThickModel` baseclass.
+`ThickModel` superclass.
 
 A full implementation of an API compatibility layer with etags can be found
 at [angular-evening](https://github.com/simplicitylabs/angular-evening), a
@@ -151,7 +161,8 @@ angular.module('myApi.collection')
 
 The ThickM layer is at the bottom, consisting of the classes `ThickModel` and
 `ThickModelCollection`, superclasses for models and model collections,
-respectively. They are responsible for communication using `$http`.
+respectively. They are responsible for communication using `$http`, with methods
+like `get()`, `query()`, `save()` and `delete()`.
 
 ## Adding to my project
 
@@ -342,7 +353,7 @@ has properties like `length`.
  - `ThickModel.extend(cls)` <br>Extend a subclass, e.g.
  ```MyApiModel.extend(ThickModel);```
 
-## Examples
+## Example code
 
 Overwriting or creating new methods:
 ```javascript
