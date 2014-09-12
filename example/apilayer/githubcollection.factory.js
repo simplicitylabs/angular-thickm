@@ -64,7 +64,7 @@ angular.module('github')
     };
 
     // Get the next page, returns promise of a new collection instance
-    GithubModelCollection.prototype.getNext = function(link) {
+    GithubModelCollection.prototype.getNext = function() {
         return this.getLink('next');
     };
 

@@ -5,8 +5,6 @@ angular.module('myApp')
     this.gists = gists;
     var ctrl = this;
 
-    console.log('gists controller');
-
     function copyGists(gists) {
         ctrl.gists = gists;
     }

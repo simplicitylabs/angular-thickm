@@ -7,6 +7,7 @@ angular.module('github')
     }
     ThickModel.extend(GithubModel);
     GithubModel._collectionClass = GithubModelCollection;
+    GithubModel.prototype._baseUrl = 'https://api.github.com/';
 
     return GithubModel;
 });
