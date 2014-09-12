@@ -93,11 +93,6 @@ var usersModule = angular.module('users', ['thickm']);
   });
 })();
 
-// Config sep
-usersModule.config(function(ThickModelProvider) {
-  ThickModelProvider.setBaseUrl('http://coolapp.com/api/v1/');
-});
-
 // Define ApiCollection factory
 usersModule.factory('MyAPICollection', function(ThickModelCollection) {
   function MyAPICollection() {
@@ -126,6 +121,7 @@ usersModule.factory('User', function(ThickModel, MyAPICollection) {
 
   User._collectionClass = MyAPICollection;
   User.prototype._modelName = 'users';
+  User.prototype._baseUrl = 'http://coolapp.com/api/v1/';
 
   // Instance methods
   User.prototype.fullName = function() {

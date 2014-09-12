@@ -29,32 +29,6 @@ beforeEach(function() {
 });
 
 /**
- * Provider tests
- */
-describe('thickm ThickModelPovider', function() {
-
-  var provider;
-
-  beforeEach(function() {
-    var fakeModule = angular.module('fakeModule', function() {});
-    fakeModule.config(function(ThickModelProvider) {
-      provider = ThickModelProvider;
-    });
-
-    module('thickm.model', 'fakeModule');
-
-    inject(function() {});
-  });
-
-  it('can set base url', function() {
-    var baseUrl = 'http://example.com/api/';
-    expect(provider).not.toBeUndefined();
-    provider.setBaseUrl(baseUrl);
-    expect(provider.baseUrl).toEqual(baseUrl);
-  });
-});
-
-/**
  * Direct tests
  */
 describe('ThickModel', function() {
@@ -226,15 +200,21 @@ describe('ThickModel', function() {
         expect(r._primaryField).toEqual('id');
       });
 
-      // it('has ThickModelCollection as _collectionClass',
-      //     inject(function(ThickModelCollection) {
-      //   expect(r._collectionClass).toBe(ThickModelCollection);
-      // }));
+      it('has ThickModelCollection as _collectionClass',
+          inject(function(ThickModelCollection) {
+        expect(ThickModel._collectionClass).toBe(ThickModelCollection);
+      }));
     });
 
     describe('getCollectionUrl', function() {
       it('returns /._modelName', function() {
         expect(r.getCollectionUrl()).toEqual('/items');
+      });
+
+      it('can be configured by setting ._baseUrl', function() {
+        ThickModel.prototype._baseUrl = 'example.com/api/v1/';
+        var q = new ThickModel();
+        expect(q.getCollectionUrl()).toEqual(q._baseUrl + 'items');
       });
     });
 
