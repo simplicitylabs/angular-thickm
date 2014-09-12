@@ -14,5 +14,10 @@ angular.module('myApp')
         return filenames[0];
     };
 
+    // Number of files in a gist
+    Gist.prototype.getNumFiles = function() {
+      return Object.keys(this.files).length;
+    };
+
     return Gist;
 });

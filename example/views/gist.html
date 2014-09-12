@@ -6,6 +6,11 @@
   {{ gist.gist.getName() }}
   <small>gist by <a href="#/users/{{ gist.gist.owner.login }}">{{ gist.gist.owner.login }}</a></small>
 </h3>
+
+<p>
+  Created {{ gist.gist.created_at | date:'medium' }}
+</p>
+
 <p class="text-muted">
   {{ gist.gist.description || 'no description' }}
 </p>
