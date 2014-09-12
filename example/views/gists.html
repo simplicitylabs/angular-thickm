@@ -1,0 +1,22 @@
+<ol class="breadcrumb">
+    <li class="active">Home</li>
+</ol>
+
+<div class="alert alert-info"
+        ng-if="gists.gists._meta.rateLimit.remaining < 30">
+    You have {{ gists.gists._meta.rateLimit.remaining }} queries left,
+    will reset at {{ gists.gists.rateResetDate() | date:'medium' }}
+</div>
+
+<ul>
+    <li ng-repeat="gist in gists.gists">
+        <a href="#/users/{{ gist.owner.login }}">{{ gist.owner.login }}</a> /
+        <a href="#/gists/{{ gist.id }}">{{ gist.getName() }}</a>
+    </li>
+</ul>
+<a href class="btn btn-default" ng-click="gists.goToFirst()">first</a>
+<a href class="btn btn-default" ng-class="{disabled: !gists.gists.hasPrev()}"
+    ng-click="gists.goToPrev()">prev</a>
+<a href class="btn btn-default" ng-class="{disabled: !gists.gists.hasNext()}"
+    ng-click="gists.goToNext()">next</a>
+<a href class="btn btn-default" ng-click="gists.goToLast()">last</a>
