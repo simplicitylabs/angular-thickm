@@ -127,6 +127,9 @@ angular.module('myApi.model')
   ThickModel.extend(MyApiModel); // extend parent class
   MyApiModel._collectionClass = MyApiModelCollection; // set collection class
 
+  MyApiModel._modelName = 'mymodel'; // for URLs
+  MyApiModel._baseUrl = '/api/v1/';  // for URLs, can also be set in API layer
+
   // Possibly overwrite or add methods here ...
 
   return MyApiModel;
@@ -181,14 +184,6 @@ tested for earlier verions).
 Add `thickm` to your application dependencies:
 ```javascript
 angular.module('myApp', ['thickm']);
-```
-
-Configure the `ThickModelProvider`:
-```javascript
-angular.module('myApp')
-.config(function(ThickModelProvider) {
-  ThickModelProvider.setBaseUrl('http://myapp.com/api/v1/');
-});
 ```
 
 Create an API compatibility layer, as shown in the API compatibility section
@@ -265,13 +260,6 @@ Delete an item:
 These are the full list of methods and properties for the classes. Not all need
 to be used or overwritten.
 
-### ThickModelProvider
-
- - `ThickModelProvider.setBaseUrl(url)` <br>Sets the base URL to which all calls
- are made, e.g. `http://myapp.com/api/v1/`. From there, queries are sent to
- `http://myapp.com/api/v1/mymodel/`, while individual items are fetched from
- `http://myapp.com/api/v1/mymodel/17/`.
-
 ### ThickModelCollection
 
 Subclasses `Array` and behaves like one: can be indexed or iterated over, and
@@ -300,6 +288,8 @@ has properties like `length`.
  (constructor).
  - `ThickModel.prototype._modelName` <br>Holds the model name for the class,
  for building URLs, e.g. `planes`.
+ - `ThickModel.prototype._baseUrl` <br>Holds the base URL for this model, e.g.
+ `http://myapp.com/api/v1/`.
  - `ThickModel.prototype._primaryField` <br>The name of the field of models to
  look them up by when building URLs, e.g. `id`.
  - `ThickModel._collectionClass` <br>The class to use for collections of this
@@ -312,7 +302,7 @@ has properties like `length`.
  validated instance of the model. Throws error if data is not valid. Returns
  an instance of `ThickModel`.
  - `ThickModel.prototype.getCollectionUrl()` <br>Returns the collection URL as
- a string, based on the base URL set in the provider and the `_modelName`.
+ a string, based on the base URL set in `_baseUrl` and the `_modelName`.
  - `ThickModel.prototype.getModelUrl()` <br>Returns the model URL, i.e. the
  URL used to fetch that instance, based on `getCollectionUrl()` and
  `_primaryField`.
