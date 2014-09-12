@@ -6,7 +6,7 @@ ThickM
 ## Example usage
 
 Example code in `/example` folder: a simple GitHub Gist browser with a GitHub
-API compatibility layer.
+API compatibility layer. [**Live example**](http://simplicitylabs.github.io/angular-thickm/example/).
 
 ## Introduction
 
