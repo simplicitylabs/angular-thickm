@@ -1,0 +1,39 @@
+<ol class="breadcrumb">
+    <li class="active">Home</li>
+</ol>
+
+<div class="alert alert-info"
+        ng-if="gists.gists._meta.rateLimit.remaining < 30">
+    You have {{ gists.gists._meta.rateLimit.remaining }} queries left,
+    will reset at {{ gists.gists.rateResetDate() | date:'medium' }}
+</div>
+
+<ul>
+    <li ng-repeat="gist in gists.gists" class="list-unstyled">
+
+      <div class="row">
+        <div class="col-md-6">
+          <strong><a href="#/users/{{ gist.owner.login }}">{{ gist.owner.login }}</a></strong>
+          /
+          <strong><a href="#/gists/{{ gist.id }}">{{ gist.getName() }}</a></strong>
+
+          <br>
+
+          <span class="text-muted">Created {{ gist.created_at | date:'medium' }}</span>
+        </div>
+        <div class="col-md-6 text-right">
+          <ul class="list-inline">
+            <li>{{ gist.getNumFiles() }} files</li>
+            <li>{{ gist.comments }} comments</li>
+          </ul>
+        </div>
+      </div>
+    </li>
+</ul>
+
+<ul class="pagination">
+  <li><a href ng-click="gists.goToFirst()">First</a></li>
+  <li><a href ng-click="gists.goToPrev()" ng-class="{disabled: !gists.gists.hasPrev()}">&laquo;</a></li>
+  <li><a href ng-click="gists.goToNext()" ng-class="{disabled: !gists.gists.hasNext()}">&raquo;</a></li>
+  <li><a href ng-click="gists.goToLast()">Last</a></li>
+</ul>
