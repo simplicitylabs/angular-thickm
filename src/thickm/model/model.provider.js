@@ -5,27 +5,12 @@
  * @name model.ThickModelProvider
  * @description
  *
- * The main provider for the library, which takes global configuration.
+ * The main provider for the library, which provides the ThickModel factory.
  */
 angular.module('thickm.model')
 .provider('ThickModel', function ThickModelProvider() {
 
   var provider = this;
-
-  /**
-   * @ngdoc method
-   * @name model.ThickModelProvider.setBaseUrl
-   * @description
-   * Set the base URL for the API, e.g. `http://example.com/api/v1/` for an
-   * API which has collections such as `http://example.com/api/v1/users` or
-   * `http://example.com/api/v1/groups`.
-   *
-   * @param {string} baseUrl The base URL for the API, e.g.
-   *                         `http://example.com/api/v1/`.
-   */
-  this.setBaseUrl = function(baseUrl) {
-    this.baseUrl = baseUrl;
-  };
 
   this.headers = {
     post: {
@@ -76,6 +61,9 @@ angular.module('thickm.model')
         angular.extend(this, data);
       }
 
+      // The base URL for the model, e.g. `/api/v1/`
+      ThickModel.prototype._baseUrl = '';
+
       // The endpoint name, i.e. 'items' in `/api/v1/items`
       ThickModel.prototype._modelName = 'items';
 
@@ -125,12 +113,12 @@ angular.module('thickm.model')
        * @methodOf model.ThickModel
        * @description
        * Get the collection URL, e.g. `http://example.com/api/v1/users`. Uses
-       * base API URL from the provider, `provider.baseUrl` and `_modelName`.
+       * base API URl from `_baseUrl` and `_modelName`.
        *
        * @return {string} The collection URL
        */
       ThickModel.prototype.getCollectionUrl = function() {
-        return (provider.baseUrl || '/') + this._modelName;
+        return (this._baseUrl || '/') + this._modelName;
       };
 
       /**

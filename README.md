@@ -3,6 +3,13 @@ ThickM
 
 [![Build Status](https://travis-ci.org/simplicitylabs/angular-thickm.svg?branch=develop)](https://travis-ci.org/simplicitylabs/angular-thickm)
 
+## Example usage
+
+Example code in `/example` folder: a simple GitHub Gist browser with a GitHub
+API compatibility layer.
+
+## Introduction
+
 ThickM is a simplistic library for AngularJS which takes a class based approach
 to building model layers communicating with REST services. This is perfect for
 building rich ("thick"), extendable models with domain logic in the form of
@@ -25,7 +32,7 @@ Wouldn't it be cool to have models like this?
 ```javascript
 Flight.query({from: 'New York', to: 'London'}).then(function(flights) {
   console.log(flights.length); // outputs 8
-  flights.getAvailableSeats(); // outputs 324
+  console.log(flights.getAvailableSeats()); // outputs 324
 
   // ...
 
@@ -45,7 +52,7 @@ more time for good measure. The layers are:
  - API specific compatibility layer
  - ThickM
 
-Let's go though them from the top down
+Let's go though them from the top down:
 
 ### Your models
 
@@ -63,7 +70,7 @@ angular.module('myApp.model.plane')
   }
 
   MyApiModel.extend(Plane); // extend parent class
-  Plane.prototype._resourceName = 'planes'; // goes in the URLs
+  Plane.prototype._modelName = 'planes'; // goes in the URLs
 
   // Possibly overwrite or add methods here ...
 
@@ -87,7 +94,11 @@ It can also have its own logic and methods, which makes sense for the API or
 usage in question, or specialized error handling.
 
 Compatibility is created by overwriting properties or methods of the
-`ThickModel` baseclass.
+`ThickModel` superclass.
+
+A full implementation of an API compatibility layer with etags can be found
+at [angular-evening](https://github.com/simplicitylabs/angular-evening), a
+library implemented for APIs created with the Python library Eve.
 
 ```javascript
 /* These classes implement a minimal API compatibility layer, which can be
@@ -112,6 +123,9 @@ angular.module('myApi.model')
 
   ThickModel.extend(MyApiModel); // extend parent class
   MyApiModel._collectionClass = MyApiModelCollection; // set collection class
+
+  MyApiModel._modelName = 'mymodel'; // for URLs
+  MyApiModel._baseUrl = '/api/v1/';  // for URLs, can also be set in API layer
 
   // Possibly overwrite or add methods here ...
 
@@ -147,7 +161,8 @@ angular.module('myApi.collection')
 
 The ThickM layer is at the bottom, consisting of the classes `ThickModel` and
 `ThickModelCollection`, superclasses for models and model collections,
-respectively. They are responsible for communication using `$http`.
+respectively. They are responsible for communication using `$http`, with methods
+like `get()`, `query()`, `save()` and `delete()`.
 
 ## Adding to my project
 
@@ -166,14 +181,6 @@ tested for earlier verions).
 Add `thickm` to your application dependencies:
 ```javascript
 angular.module('myApp', ['thickm']);
-```
-
-Configure the `ThickModelProvider`:
-```javascript
-angular.module('myApp')
-.config(function(ThickModelProvider) {
-  ThickModelProvider.setBaseUrl('http://myapp.com/api/v1/');
-});
 ```
 
 Create an API compatibility layer, as shown in the API compatibility section
@@ -250,13 +257,6 @@ Delete an item:
 These are the full list of methods and properties for the classes. Not all need
 to be used or overwritten.
 
-### ThickModelProvider
-
- - `ThickModelProvider.setBaseUrl(url)` <br>Sets the base URL to which all calls
- are made, e.g. `http://myapp.com/api/v1/`. From there, queries are sent to
- `http://myapp.com/api/v1/mymodel/`, while individual items are fetched from
- `http://myapp.com/api/v1/mymodel/17/`.
-
 ### ThickModelCollection
 
 Subclasses `Array` and behaves like one: can be indexed or iterated over, and
@@ -285,6 +285,8 @@ has properties like `length`.
  (constructor).
  - `ThickModel.prototype._modelName` <br>Holds the model name for the class,
  for building URLs, e.g. `planes`.
+ - `ThickModel.prototype._baseUrl` <br>Holds the base URL for this model, e.g.
+ `http://myapp.com/api/v1/`.
  - `ThickModel.prototype._primaryField` <br>The name of the field of models to
  look them up by when building URLs, e.g. `id`.
  - `ThickModel._collectionClass` <br>The class to use for collections of this
@@ -297,7 +299,7 @@ has properties like `length`.
  validated instance of the model. Throws error if data is not valid. Returns
  an instance of `ThickModel`.
  - `ThickModel.prototype.getCollectionUrl()` <br>Returns the collection URL as
- a string, based on the base URL set in the provider and the `_modelName`.
+ a string, based on the base URL set in `_baseUrl` and the `_modelName`.
  - `ThickModel.prototype.getModelUrl()` <br>Returns the model URL, i.e. the
  URL used to fetch that instance, based on `getCollectionUrl()` and
  `_primaryField`.
@@ -338,7 +340,9 @@ has properties like `length`.
  - `ThickModel.extend(cls)` <br>Extend a subclass, e.g.
  ```MyApiModel.extend(ThickModel);```
 
-## Examples
+## Example code
+
+See also the `/example` folder.
 
 Overwriting or creating new methods:
 ```javascript
@@ -362,7 +366,8 @@ MyModelCollection.prototype.hasMore = function() {
 
 ## Open source finished API compatibility layers
 
-Coming soon ...
+ - [angular-evening](https://github.com/simplicitylabs/angular-evening) for the
+ Python REST framework *Eve*
 
 ## Contributing
 

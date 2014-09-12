@@ -1,0 +1,16 @@
+<ol class="breadcrumb">
+  <li><a href="#/gists">Home</a></li>
+  <li>Users</li>
+  <li class="active">{{ user.user.login }}</li>
+</ol>
+<h3>
+    {{ user.user.login }}
+</h3>
+<img src="{{ user.user.avatar_url }}" class="img-circle"
+    style="width: 200px;" class="pull-right">
+<address>
+  <strong>{{ user.user.name }}</strong>
+  <span class="text-muted">{{ user.user.company }}</span><br>
+  {{ user.user.location }}
+  <a href>{{ user.user.email }}</a>
+</address>
