@@ -3,13 +3,10 @@ ThickM
 
 [![Build Status](https://travis-ci.org/simplicitylabs/angular-thickm.svg?branch=develop)](https://travis-ci.org/simplicitylabs/angular-thickm)
 
-Super quick examples:
+## Example usage
 
- - GitHub Gist browsing app: App with simplified GitHub API layer
-    [code](http://jsfiddle.net/tk0j5s0t/8/) |
-    [fullscreen](http://jsfiddle.net/tk0j5s0t/8/embedded/result/)
- - Super simple issue-browsing: Minimal app to browse AngularJS issues
-    [code](http://jsfiddle.net/b0s21s44/)
+Example code in `/example` folder: a simple GitHub Gist browser with a GitHub
+API compatibility layer.
 
 ## Introduction
 
@@ -344,6 +341,8 @@ has properties like `length`.
  ```MyApiModel.extend(ThickModel);```
 
 ## Example code
+
+See also the `/example` folder.
 
 Overwriting or creating new methods:
 ```javascript

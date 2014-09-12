@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ThickM Example</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  </head>
+  <body ng-app="myApp">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="page-header">
+        <h1>Gist browser <small>angular-thickm example</small></h1>
+      </div>
+
+      <!-- View -->
+      <div ng-view></div>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.1/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.1/angular-route.min.js"></script>
+    <script src="../dist/angular-thickm.js"></script>
+
+    <!-- Github compatibility layer -->
+    <script src="apilayer/github.module.js"></script>
+    <script src="apilayer/githubcollection.factory.js"></script>
+    <script src="apilayer/githubmodel.factory.js"></script>
+
+    <!-- App -->
+    <script src="app/app.js"></script>
+    <script src="app/gist.factory.js"></script>
+    <script src="app/user.factory.js"></script>
+    <script src="app/gist.ctrl.js"></script>
+    <script src="app/gists.ctrl.js"></script>
+    <script src="app/user.ctrl.js"></script>
+  </body>
+</html>
