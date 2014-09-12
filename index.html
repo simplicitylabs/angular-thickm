@@ -1,0 +1,476 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Angular-thickm by simplicitylabs</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Angular-thickm</h1>
+        <p>Class based REST API interaction for AngularJS</p>
+
+        <p class="view"><a href="https://github.com/simplicitylabs/angular-thickm">View the Project on GitHub <small>simplicitylabs/angular-thickm</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/simplicitylabs/angular-thickm/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/simplicitylabs/angular-thickm/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/simplicitylabs/angular-thickm">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a name="thickm" class="anchor" href="#thickm"><span class="octicon octicon-link"></span></a>ThickM</h2>
+
+<p><a href="https://travis-ci.org/simplicitylabs/angular-thickm"><img src="https://travis-ci.org/simplicitylabs/angular-thickm.svg?branch=develop" alt="Build Status"></a></p>
+
+<h2>
+<a name="example-usage" class="anchor" href="#example-usage"><span class="octicon octicon-link"></span></a>Example usage</h2>
+
+<p>Example code in <code>/example</code> folder: a simple GitHub Gist browser with a GitHub
+API compatibility layer.</p>
+
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>ThickM is a simplistic library for AngularJS which takes a class based approach
+to building model layers communicating with REST services. This is perfect for
+building rich ("thick"), extendable models with domain logic in the form of
+properties, methods and types.</p>
+
+<p>ThickM is based on a belief that much of the logic for an application often is
+best placed in the model, and that they often are stored at and retrieved from
+a REST API service. It also wants implementation details for any such API to be
+based on code rather than configuration, for easier testing and debugging and
+for more flexibility.</p>
+
+<p>This leads to simpler controllers, easier and fewer redundant tests and an
+easier to maintain codebase.</p>
+
+<p>ThickM doesn't try to be a drop-in solution for every API, because APIs,
+applications, uses and technologies are different.</p>
+
+<p>Wouldn't it be cool to have models like this?</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Flight</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="nx">from</span><span class="o">:</span> <span class="s1">'New York'</span><span class="p">,</span> <span class="nx">to</span><span class="o">:</span> <span class="s1">'London'</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">flights</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">flights</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span> <span class="c1">// outputs 8</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">flights</span><span class="p">.</span><span class="nx">getAvailableSeats</span><span class="p">());</span> <span class="c1">// outputs 324</span>
+
+  <span class="c1">// ...</span>
+
+  <span class="kd">var</span> <span class="nx">fastestFlight</span> <span class="o">=</span> <span class="nx">fligths</span><span class="p">.</span><span class="nx">getFastest</span><span class="p">();</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">fastestFlight</span> <span class="k">instanceof</span> <span class="nx">Flight</span><span class="p">);</span> <span class="c1">// outputs true</span>
+
+  <span class="nx">fastestFligth</span><span class="p">.</span><span class="nx">book</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// books two seats</span>
+<span class="p">});</span>
+</pre></div>
+
+<h2>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>Think of ThickM as the bottom layer in a layer based model layer. Say layer one
+more time for good measure. The layers are:</p>
+
+<ul>
+<li>Your models</li>
+<li>API specific compatibility layer</li>
+<li>ThickM</li>
+</ul><p>Let's go though them from the top down:</p>
+
+<h3>
+<a name="your-models" class="anchor" href="#your-models"><span class="octicon octicon-link"></span></a>Your models</h3>
+
+<p>These are the application or domain specific models for your application. They
+implement stuff like users, groups, cars, trees or any other entity you might
+need. They typically consist of one class per model, implemented in JavaScript,
+and can be as minimal as a couple of lines of code, or as big and complex as you
+want.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp.model.plane'</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'Plane'</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">PlaneFactory</span><span class="p">(</span><span class="nx">MyApiModel</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nx">Plane</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">MyApiModel</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span> <span class="c1">// call parent constructor</span>
+  <span class="p">}</span>
+
+  <span class="nx">MyApiModel</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Plane</span><span class="p">);</span> <span class="c1">// extend parent class</span>
+  <span class="nx">Plane</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_modelName</span> <span class="o">=</span> <span class="s1">'planes'</span><span class="p">;</span> <span class="c1">// goes in the URLs</span>
+
+  <span class="c1">// Possibly overwrite or add methods here ...</span>
+
+  <span class="k">return</span> <span class="nx">Plane</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>If two or more of the models share logic, it may make sense to create a common
+superclass which they both inherit from.</p>
+
+<p>It may also make sense to create a specialized collection class for the model
+or models, which inherits from the API compatibility layer's.</p>
+
+<h3>
+<a name="api-compatibility-layer" class="anchor" href="#api-compatibility-layer"><span class="octicon octicon-link"></span></a>API compatibility layer</h3>
+
+<p>The API compatibility layer specifies how your API works: how meta data is
+described and organized, where items are located in a response, implementation
+of support for technologies such as etags and so on.</p>
+
+<p>It can also have its own logic and methods, which makes sense for the API or
+usage in question, or specialized error handling.</p>
+
+<p>Compatibility is created by overwriting properties or methods of the
+<code>ThickModel</code> superclass.</p>
+
+<p>A full implementation of an API compatibility layer with etags can be found
+at <a href="https://github.com/simplicitylabs/angular-evening">angular-evening</a>, a
+library implemented for APIs created with the Python library Eve.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="cm">/* These classes implement a minimal API compatibility layer, which can be</span>
+<span class="cm"> * specific to your app or a stand-alone library facilitating apps for the</span>
+<span class="cm"> * kind of API you're using.</span>
+<span class="cm"> *</span>
+<span class="cm"> * This implementation only sets models' id field to '_id', and specifies that</span>
+<span class="cm"> * items in query responses are located in '_items', while meta data is in</span>
+<span class="cm"> * '_meta'.</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * MyApiModel</span>
+<span class="cm"> */</span>
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApi.model'</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'MyApiModel'</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">MyApiModelFactory</span><span class="p">(</span><span class="nx">ThickModel</span><span class="p">,</span>
+    <span class="nx">MyApiModelCollection</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nx">MyApiModel</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_primaryField</span> <span class="o">=</span> <span class="s1">'_id'</span><span class="p">;</span>  <span class="c1">// set 'id' field of models</span>
+    <span class="nx">ThickModel</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span> <span class="c1">// call parent constructor</span>
+  <span class="p">}</span>
+
+  <span class="nx">ThickModel</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">MyApiModel</span><span class="p">);</span> <span class="c1">// extend parent class</span>
+  <span class="nx">MyApiModel</span><span class="p">.</span><span class="nx">_collectionClass</span> <span class="o">=</span> <span class="nx">MyApiModelCollection</span><span class="p">;</span> <span class="c1">// set collection class</span>
+
+  <span class="nx">MyApiModel</span><span class="p">.</span><span class="nx">_modelName</span> <span class="o">=</span> <span class="s1">'mymodel'</span><span class="p">;</span> <span class="c1">// for URLs</span>
+  <span class="nx">MyApiModel</span><span class="p">.</span><span class="nx">_baseUrl</span> <span class="o">=</span> <span class="s1">'/api/v1/'</span><span class="p">;</span>  <span class="c1">// for URLs, can also be set in API layer</span>
+
+  <span class="c1">// Possibly overwrite or add methods here ...</span>
+
+  <span class="k">return</span> <span class="nx">MyApiModel</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * MyApiModelCollection</span>
+<span class="cm"> */</span>
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApi.collection'</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'MyApiModelCollection'</span><span class="p">,</span>
+    <span class="kd">function</span> <span class="nx">MyApiModelCollection</span><span class="p">(</span><span class="nx">ThickModelCollection</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">function</span> <span class="nx">MyApiModelCollection</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">ThickModelCollection</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span> <span class="c1">// call parent constructor</span>
+  <span class="p">}</span>
+  <span class="nx">ThickModelCollection</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">MyApiModelCollection</span><span class="p">);</span> <span class="c1">// extend parent class</span>
+
+  <span class="nx">MyApiModelCollection</span><span class="p">.</span><span class="nx">_itemsField</span> <span class="o">=</span> <span class="s1">'_items'</span><span class="p">;</span> <span class="c1">// set where the array of items</span>
+                                               <span class="c1">// (which will be converted to</span>
+                                               <span class="c1">// model instances) are</span>
+  <span class="nx">MyApiModelCollection</span><span class="p">.</span><span class="nx">_metaField</span> <span class="o">=</span> <span class="s1">'_meta'</span><span class="p">;</span> <span class="c1">// set where resource meta data</span>
+                                             <span class="c1">// such as total available items</span>
+                                             <span class="c1">// and pagination is located</span>
+
+  <span class="c1">// Possibly overwrite or add methods here ...</span>
+
+  <span class="k">return</span> <span class="nx">MyApiModelCollection</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="thickm-1" class="anchor" href="#thickm-1"><span class="octicon octicon-link"></span></a>ThickM</h3>
+
+<p>The ThickM layer is at the bottom, consisting of the classes <code>ThickModel</code> and
+<code>ThickModelCollection</code>, superclasses for models and model collections,
+respectively. They are responsible for communication using <code>$http</code>, with methods
+like <code>get()</code>, <code>query()</code>, <code>save()</code> and <code>delete()</code>.</p>
+
+<h2>
+<a name="adding-to-my-project" class="anchor" href="#adding-to-my-project"><span class="octicon octicon-link"></span></a>Adding to my project</h2>
+
+<ul>
+<li>Using bower: <code>bower install angular-thickm --save</code>.</li>
+<li>Manually using either raw or minified versions in the <code>dist</code> folder.</li>
+</ul><h2>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>There are no dependencies to this project other than AngularJS &gt;= 1.2 (not
+tested for earlier verions).</p>
+
+<h2>
+<a name="quick-start-guide" class="anchor" href="#quick-start-guide"><span class="octicon octicon-link"></span></a>Quick start guide</h2>
+
+<h3>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h3>
+
+<p>Add <code>thickm</code> to your application dependencies:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'thickm'</span><span class="p">]);</span>
+</pre></div>
+
+<p>Create an API compatibility layer, as shown in the API compatibility section
+above, subclassing ThickM's classes.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'MyApiModel'</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">MyApiModelFactory</span><span class="p">(</span><span class="nx">ThickModel</span><span class="p">,</span>
+    <span class="nx">MyApiModelCollection</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nx">MyApiModel</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+
+  <span class="nx">MyApiModel</span><span class="p">.</span><span class="nx">_collectionClass</span> <span class="o">=</span> <span class="nx">MyApiModelCollection</span><span class="p">;</span>
+  <span class="c1">// ...</span>
+
+  <span class="k">return</span> <span class="nx">MyApiModel</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'MyApiModelCollection'</span><span class="p">,</span>
+    <span class="kd">function</span> <span class="nx">MyApiModelCollection</span><span class="p">(</span><span class="nx">ThickModelCollection</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">function</span> <span class="nx">MyApiModelCollection</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+
+  <span class="c1">// ...</span>
+
+  <span class="k">return</span> <span class="nx">MyApiModelCollection</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Then implement your models as shown in the "Your models" section above,
+subclassing your API compatibility section.</p>
+
+<h3>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>(Given a model named <code>Plane</code>)</p>
+
+<p>Fetch a collection of items:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Plane</span><span class="p">.</span><span class="nx">query</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span> <span class="p">...</span> <span class="p">);</span> <span class="c1">// no parameters</span>
+<span class="nx">Plane</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="nx">make</span><span class="o">:</span> <span class="s1">'airbus'</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span> <span class="p">...</span> <span class="p">);</span> <span class="c1">// with parameters</span>
+</pre></div>
+
+<p>Fetch one item by primary field:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Plane</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">89</span><span class="p">);</span> <span class="c1">// fetches plane with id 89</span>
+</pre></div>
+
+<p>Create a new item and save it</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">plane</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Plane</span><span class="p">({</span><span class="nx">make</span><span class="o">:</span> <span class="s1">'airbus'</span><span class="p">,</span> <span class="nx">seats</span><span class="o">:</span> <span class="mi">380</span><span class="p">});</span>
+<span class="nx">plane</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+</pre></div>
+
+<p>Edit and save an item:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Plane</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">89</span><span class="p">).</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">plane</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">plane</span><span class="p">.</span><span class="nx">seats</span> <span class="o">=</span> <span class="mi">240</span><span class="p">;</span>
+  <span class="nx">plane</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Delete an item:</p>
+
+<div class="highlight highlight-javascript"><pre>  <span class="c1">// ...</span>
+  <span class="nx">plane</span><span class="p">.</span><span class="k">delete</span><span class="p">()</span>
+</pre></div>
+
+<h2>
+<a name="reference" class="anchor" href="#reference"><span class="octicon octicon-link"></span></a>Reference</h2>
+
+<p>These are the full list of methods and properties for the classes. Not all need
+to be used or overwritten.</p>
+
+<h3>
+<a name="thickmodelcollection" class="anchor" href="#thickmodelcollection"><span class="octicon octicon-link"></span></a>ThickModelCollection</h3>
+
+<p>Subclasses <code>Array</code> and behaves like one: can be indexed or iterated over, and
+has properties like <code>length</code>.</p>
+
+<ul>
+<li>
+<code>ThickModelCollection._itemsField</code> <br>Decides what field in the response
+holds the array of items. Default is <code>null</code>, indicating that the response is
+in itself an array.</li>
+<li>
+<code>ThickModelCollection._metaField</code> <br>Decides what field in the response
+holds meta data, like the total number of items available and pagination.</li>
+<li>
+<code>ThickModelCollection.itemsFromResponse(cls, response)</code> <br>Given a model
+class (subclass of <code>ThickModel</code>) and a response from <code>$http</code>, create an array
+of instances of the model class.</li>
+<li>
+<code>ThickModelCollection.metaFromResponse(cls, response)</code> <br>Given a model
+class and a response from <code>$http</code>, create a meta data object with information
+about the total number of items available and pagination.</li>
+<li>
+<code>ThickModelCollection.build(cls, response)</code> <br>Given a model class and
+a response from <code>$http</code>, create an instance of the <code>ThickModelCollection</code> class
+(or a subclass).</li>
+<li>
+<code>ThickModelCollection.extend(cls)</code> <br>Extend a subclass, e.g.
+<code>MyApiModelCollection.extend(ThickModelCollection);</code>
+</li>
+</ul><h3>
+<a name="thickmodel" class="anchor" href="#thickmodel"><span class="octicon octicon-link"></span></a>ThickModel</h3>
+
+<ul>
+<li>
+<code>ThickModel(data)</code><br>Copies all properties of <code>data</code> to the new instance
+(constructor).</li>
+<li>
+<code>ThickModel.prototype._modelName</code> <br>Holds the model name for the class,
+for building URLs, e.g. <code>planes</code>.</li>
+<li>
+<code>ThickModel.prototype._baseUrl</code> <br>Holds the base URL for this model, e.g.
+<code>http://myapp.com/api/v1/</code>.</li>
+<li>
+<code>ThickModel.prototype._primaryField</code> <br>The name of the field of models to
+look them up by when building URLs, e.g. <code>id</code>.</li>
+<li>
+<code>ThickModel._collectionClass</code> <br>The class to use for collections of this
+model, default is <code>ThickModelCollection</code>. Use a reference to the class, not
+its name.</li>
+<li>
+<code>ThickModel.validate(data)</code> <br>Validates that the data can be used to build
+an instance of the model. The default only validates that the data is an
+object. Returns <code>true</code> if the data is valid, or <code>false</code> if not.</li>
+<li>
+<code>ThickModel.build(data)</code> <br>Factory method. Uses <code>data</code> object to create a
+validated instance of the model. Throws error if data is not valid. Returns
+an instance of <code>ThickModel</code>.</li>
+<li>
+<code>ThickModel.prototype.getCollectionUrl()</code> <br>Returns the collection URL as
+a string, based on the base URL set in <code>_baseUrl</code> and the <code>_modelName</code>.</li>
+<li>
+<code>ThickModel.prototype.getModelUrl()</code> <br>Returns the model URL, i.e. the
+URL used to fetch that instance, based on <code>getCollectionUrl()</code> and
+<code>_primaryField</code>.</li>
+<li>
+<code>ThickModel.transformCollectionResponse(response)</code> <br>Transform a collection
+response into a model collection (<code>ThickModelCollection</code> or the collection
+model given by <code>_collectionClass</code>) instance. Returns an instance.</li>
+<li>
+<code>ThickModel.transformItemResponse(response)</code> <br>Transform an item response
+into a model instance. Returns an instance.</li>
+<li>
+<code>ThickModel.prototype.transformItemRequest(headers)</code> <br>Transform a request
+sent to the API, possibly by altering the <code>headers</code> object. Returns an object
+representing the instance, the default is <code>this</code>.</li>
+<li>
+<code>ThickModel.queryUrl(url[, params])</code> <br>Query the specific URL for a
+collection of items, using <code>params</code> as additional parameters in the URL (see
+<code>$http</code> documentation). Returns a promise resolving to an instance of the
+collection class.</li>
+<li>
+<code>ThickModel.query([params])</code> <br>Query to the URL given by
+<code>getCollectionUrl()</code> for a collection of items. Returns promise resolving to an
+instance of the collection class.</li>
+<li>
+<code>ThickModel.getUrl(url[, params])</code> <br>Get an item from the specific URL,
+using <code>params</code> as additional parameters in the URL (see <code>$http</code> documentation).
+Returns a promise resolving to an instance of <code>ThickModel</code>.</li>
+<li>
+<code>ThickModel.get(id[, params])</code> <br>Get an item with the specific <code>id</code>
+(primary field), using <code>params</code> as additional parameters in the URL. Returns
+a promise resolving to an instance of <code>ThickModel</code>.</li>
+<li>
+<code>ThickModel.prototype.isNew()</code> <br>Returns a boolean describing if the
+instance is fetched from the API or not. Default decides this based on whether
+its <code>id</code> (primary field) is set.</li>
+<li>
+<code>ThickModel.prototype.update(data)</code> <br>Overwrite the instance's data with
+new data form the <code>data</code> object.</li>
+<li>
+<code>ThickModel.prototype.save()</code> <br>Either POSTs or PUTs the instance to the
+URL given by <code>getCollectionUrl()</code> or <code>getModelUrl</code>, respectively, based on
+whether the object is "new" or not, given by <code>isNew()</code>. Returns a promise
+resolving to an instance of the model based on data given from the API, and
+also updates the instance from which is was called with this data.</li>
+<li>
+<code>ThickModel.prototype.delete()</code> <br>DELETEs the model by a request to the
+URL given by <code>getModelUrl()</code> if the object is not new, or no-ops if it is.
+Either way, it returns a promise resolving to an empty object.</li>
+<li>
+<code>ThickModel.extend(cls)</code> <br>Extend a subclass, e.g.
+<code>MyApiModel.extend(ThickModel);</code>
+</li>
+</ul><h2>
+<a name="example-code" class="anchor" href="#example-code"><span class="octicon octicon-link"></span></a>Example code</h2>
+
+<p>See also the <code>/example</code> folder.</p>
+
+<p>Overwriting or creating new methods:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">// Extending a class method</span>
+<span class="c1">// Pull in the '_links' field</span>
+<span class="nx">MyModelCollection</span><span class="p">.</span><span class="nx">build</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cls</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// call the parent method</span>
+  <span class="kd">var</span> <span class="nx">rc</span> <span class="o">=</span> <span class="nx">ThickModelCollection</span><span class="p">.</span><span class="nx">build</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">cls</span><span class="p">,</span> <span class="nx">response</span><span class="p">);</span>
+  <span class="c1">// extend the returned value</span>
+  <span class="nx">rc</span><span class="p">.</span><span class="nx">_links</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">_links</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">rc</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// Creating a new instance method</span>
+<span class="c1">// See if there is more on the server</span>
+<span class="nx">MyModelCollection</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasMore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">isDefined</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_links</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_links</span><span class="p">.</span><span class="nx">next</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+<h2>
+<a name="open-source-finished-api-compatibility-layers" class="anchor" href="#open-source-finished-api-compatibility-layers"><span class="octicon octicon-link"></span></a>Open source finished API compatibility layers</h2>
+
+<ul>
+<li>
+<a href="https://github.com/simplicitylabs/angular-evening">angular-evening</a> for the
+Python REST framework <em>Eve</em>
+</li>
+</ul><h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>Install</p>
+
+<pre><code>npm install &amp;&amp; bower install
+</code></pre>
+
+<p>Build</p>
+
+<pre><code>grunt
+</code></pre>
+
+<p>Test</p>
+
+<pre><code>npm test
+</code></pre>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p><a href="http://opensource.org/licenses/MIT">MIT</a> © <a href="http://www.silabs.com">Silicon Laboratories,
+Inc.</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/simplicitylabs">simplicitylabs</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
