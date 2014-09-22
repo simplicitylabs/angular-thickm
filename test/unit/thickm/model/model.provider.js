@@ -53,25 +53,9 @@ describe('ThickModel', function() {
     });
   });
 
-  describe('validate', function() {
-    it('returns true when passed an object', function() {
-      expect(ThickModel.validate({})).toEqual(true);
-    });
-
-    it('returns false when passed non-object', function() {
-      expect(ThickModel.validate('')).toEqual(false);
-    });
-  });
-
   describe('build', function() {
     it('returns thickmodel instance when passed object', function() {
       expect(ThickModel.build({}) instanceof ThickModel).toEqual(true);
-    });
-
-    it('throws when passed non-object', function() {
-      expect(function() {
-        return ThickModel.build('');
-      }).toThrow();
     });
   });
 
@@ -416,20 +400,6 @@ describe('User use case', function() {
         $httpBackend.flush();
       });
 
-      it('should validate users from API', function() {
-        $httpBackend.expectGET(testData.collectionUrl);
-        spyOn(User, 'validate').andCallThrough();
-        var users;
-        var promise = User.query();
-        expect(promise).toBeSuccessErrorPromise();
-        promise.then(function(_users) {
-          users = _users;
-        });
-        $httpBackend.flush();
-        expect(User.validate).toHaveBeenCalled();
-        expect(User.validate.calls.length).toEqual(users.length);
-      });
-
       it('should set query parameters', function() {
         $httpBackend.expectGET(testData.collectionUrl +
             '?sort=%5B%5B%22partnumber%22,1%5D%5D');
@@ -461,20 +431,6 @@ describe('User use case', function() {
         $httpBackend.flush();
       });
 
-      it('should validate users from API', function() {
-        $httpBackend.expectGET(testData.specifiedCollectionUrl);
-        spyOn(User, 'validate').andCallThrough();
-        var users;
-        var promise = User.queryUrl(testData.specifiedCollectionUrl);
-        expect(promise).toBeSuccessErrorPromise();
-        promise.then(function(_users) {
-          users = _users;
-        });
-        $httpBackend.flush();
-        expect(User.validate).toHaveBeenCalled();
-        expect(User.validate.calls.length).toEqual(users.length);
-      });
-
       it('should set query parameters', function() {
         $httpBackend.expectGET(testData.specifiedCollectionUrl +
             '?sort=%5B%5B%22partnumber%22,1%5D%5D');
@@ -502,14 +458,6 @@ describe('User use case', function() {
         $httpBackend.flush();
       });
 
-      it('should validate user from API', function() {
-        $httpBackend.expectGET(testData.knownUserUrl);
-        spyOn(User, 'validate').andCallThrough();
-        expect(User.get(testData.knownUserData._id)).toBeSuccessErrorPromise();
-        $httpBackend.flush();
-        expect(User.validate).toHaveBeenCalled();
-      });
-
       it('should set query parameters', function() {
         $httpBackend.expectGET(testData.knownUserUrl + '?embedded=%7B%22groups%22:1%7D');
         User.get(testData.knownUserData._id, { embedded: { groups: 1 }});
@@ -533,14 +481,6 @@ describe('User use case', function() {
           expect(user.username).toEqual(testData.knownUserData.username);
         });
         $httpBackend.flush();
-      });
-
-      it('should validate user from API', function() {
-        $httpBackend.expectGET(testData.specifiedItemUrl);
-        spyOn(User, 'validate').andCallThrough();
-        expect(User.getUrl(testData.specifiedItemUrl)).toBeSuccessErrorPromise();
-        $httpBackend.flush();
-        expect(User.validate).toHaveBeenCalled();
       });
 
       it('should set query parameters', function() {

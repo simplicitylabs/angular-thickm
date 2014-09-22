@@ -76,34 +76,16 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc function
-       * @name model.ThickModel.validate
-       * @propertyOf model.ThickModel
-       * @description
-       * Validate data for a ThickModel.
-       *
-       * @param {Object} data The data to validate.
-       * @returns {boolean} True if the object is valid, false otherwise.
-       */
-      ThickModel.validate = function(data) {
-        return angular.isObject(data);
-      };
-
-      /**
-       * @ngdoc function
        * @name model.ThickModel.build
        * @propertyOf model.ThickModel
        * @description
        * ThickModel factory method. Takes data object and uses the `ThickModel`
-       * constructor to create a new `ThickModel`. The object is validated with
-       * `validate`. Throws error if the data is invalid.
+       * constructor to create a new `ThickModel`.
        *
        * @param  {Object} data Data for the new ThickModel.
        * @return {ThickModel} new ThickModel
        */
       ThickModel.build = function(data) {
-        if (!this.validate(data)) {
-          throw new Error('invalid item ' + JSON.stringify(data));
-        }
         return new this(data);
       };
 
