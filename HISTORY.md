@@ -1,3 +1,8 @@
+0.3.0 / 2014-09-22:
+-------------------
+ - **Breaking change:** Removed validation. Models are still a good place to
+ specify validation rules, but it is left out of ThickM for now.
+
 0.2.0 / 2014-09-12:
 -------------------
  - **Breaking change:** The provider's `.setBaseUrl()` method is now deprecated,
