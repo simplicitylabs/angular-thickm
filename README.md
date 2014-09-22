@@ -6,7 +6,7 @@ ThickM
 ## Example usage
 
 Example code in `/example` folder: a simple GitHub Gist browser with a GitHub
-API compatibility layer.
+API compatibility layer. [**Live example**](http://simplicitylabs.github.io/angular-thickm/example/).
 
 ## Introduction
 
@@ -292,12 +292,8 @@ has properties like `length`.
  - `ThickModel._collectionClass` <br>The class to use for collections of this
  model, default is `ThickModelCollection`. Use a reference to the class, not
  its name.
- - `ThickModel.validate(data)` <br>Validates that the data can be used to build
- an instance of the model. The default only validates that the data is an
- object. Returns `true` if the data is valid, or `false` if not.
  - `ThickModel.build(data)` <br>Factory method. Uses `data` object to create a
- validated instance of the model. Throws error if data is not valid. Returns
- an instance of `ThickModel`.
+ instance of the model. Returns an instance of `ThickModel`.
  - `ThickModel.prototype.getCollectionUrl()` <br>Returns the collection URL as
  a string, based on the base URL set in `_baseUrl` and the `_modelName`.
  - `ThickModel.prototype.getModelUrl()` <br>Returns the model URL, i.e. the

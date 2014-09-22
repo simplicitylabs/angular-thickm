@@ -127,10 +127,6 @@ usersModule.factory('User', function(ThickModel, MyAPICollection) {
   User.prototype.fullName = function() {
     return 'full name';
   };
-
-  // Overwrite inherited static methods
-  User.validate = function() {
-    return true;
-  };
+  
   return User;
 });
