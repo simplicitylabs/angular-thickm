@@ -278,6 +278,8 @@ has properties like `length`.
  (or a subclass).
  - `ThickModelCollection.extend(cls)` <br>Extend a subclass, e.g.
  ```MyApiModelCollection.extend(ThickModelCollection);```
+ - `ThickModelCollection.toArray()` <br>Return an array which passes Angular's
+ `angular.isArray()`.
 
 ### ThickModel
 
