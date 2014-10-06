@@ -482,6 +482,18 @@ angular.module('thickm.collection')
     angular.extend(subclass, this);
   };
 
+  /**
+   * @ngdoc method
+   * @name model.ThickModelCollection.toArray
+   * @methodOf model.ThickModelCollection
+   * @description
+   * Produce a 'pure' array, which angular will recognize with
+   * `angular.isArray()`.
+   */
+  ThickModelCollection.prototype.toArray = function() {
+    return this.map(angular.identity);
+  };
+
   return ThickModelCollection;
 
 });

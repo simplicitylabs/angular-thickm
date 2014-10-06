@@ -143,6 +143,20 @@ describe('ThickModelCollection', function() {
     });
   });
 
+  describe('toArray', function() {
+    var collection;
+    var response = {data: [1, 2]};
+    beforeEach(function() {
+      var Cls = function Cls(){};
+      Cls.build = function() { return new Cls(); };
+      collection = ThickModelCollection.build(Cls, response);
+    });
+
+    it('produces angular-recognizable array', function() {
+      expect(angular.isArray(collection.toArray())).toBe(true);
+    });
+  });
+
 });
 
 describe('ThickModelCollection User use case', function() {
