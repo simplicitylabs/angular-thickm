@@ -1,3 +1,8 @@
+0.3.1 / 2014-10-06:
+-------------------
+ - Added `.toArray()` for collection instances: produces an array which passes
+ Angular's `angular.toArray()` (angular#angular.js#7143).
+
 0.3.0 / 2014-09-22:
 -------------------
  - **Breaking change:** Removed validation. Models are still a good place to
