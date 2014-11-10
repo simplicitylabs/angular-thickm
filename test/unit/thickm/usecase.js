@@ -77,9 +77,9 @@ var usersModule = angular.module('users', ['thickm']);
           return [200, JSON.stringify(knownUserData), {}, 'OK'];
         });
 
-    $httpBackend.whenPUT(collectionUrl + '/' + knownUserData._id, postData, postHeaders)
+    $httpBackend.whenPATCH(collectionUrl + '/' + knownUserData._id, postData, postHeaders)
         .respond(function(method, url, data) {
-          return [200, JSON.stringify(data), {}, 'OK'];
+          return [200, data, {}, 'OK'];
         });
 
     $httpBackend.whenPOST(collectionUrl, postData, postHeaders).respond(function() {
@@ -127,6 +127,6 @@ usersModule.factory('User', function(ThickModel, MyAPICollection) {
   User.prototype.fullName = function() {
     return 'full name';
   };
-  
+
   return User;
 });

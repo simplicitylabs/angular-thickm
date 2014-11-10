@@ -19,6 +19,9 @@ angular.module('thickm.model')
     put: {
       'Content-Type': 'application/json'
     },
+    patch: {
+      'Content-Type': 'application/json'
+    },
     delete: {
       'Content-Type': 'application/json'
     }
@@ -262,6 +265,9 @@ angular.module('thickm.model')
        * @param {Object} data Object with new data.
        */
       ThickModel.prototype.update = function(data) {
+        if (!data) {
+          data = {};
+        }
         angular.extend(this, data);
       };
 
@@ -287,14 +293,14 @@ angular.module('thickm.model')
 
         var config = {};
         config.headers = isNew ? angular.copy(provider.headers.post) :
-            angular.copy(provider.headers.put);
+            angular.copy(provider.headers.patch);
 
         var data = this.transformItemRequest(config.headers);
 
         if (this.isNew()) {
           promise = $http.post(this.getCollectionUrl(), data, config);
         } else {
-          promise = $http.put(this.getModelUrl(), data, config);
+          promise = $http.patch(this.getModelUrl(), data, config);
         }
 
         promise.then(function(response) {

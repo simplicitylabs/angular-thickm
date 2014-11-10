@@ -38,6 +38,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start karma-unit.conf.js --single-run"
+    "test": "./node_modules/karma/bin/karma start karma-unit.conf.js --single-run",
+    "conttest": "./node_modules/karma/bin/karma start karma-unit.conf.js"
   }
 }
