@@ -220,6 +220,17 @@ describe('ThickModel', function() {
       it('returns an object', function() {
         expect(angular.isObject(r.transformItemRequest())).toEqual(true);
       });
+
+      it('returns all fields if isNew', function() {
+        var model = new ThickModel({a: 1, b: 2});
+        expect(Object.keys(model.transformItemRequest()).length).toBe(2);
+      });
+
+      it('returns only changed fields if not isNew', function() {
+        var model = new ThickModel({id: 1, a: 1, b: 2});
+        model.a = 42;
+        expect(Object.keys(model.transformItemRequest()).length).toBe(1);
+      });
     });
 
     describe('isNew', function() {
@@ -302,10 +313,6 @@ describe('ThickModel', function() {
           expect(r instanceof ThickModel).toEqual(true);
         });
       });
-
-      // it('only sends changed fields when saving not-new', function() {
-      //
-      // });
     });
 
     describe('delete', function() {
