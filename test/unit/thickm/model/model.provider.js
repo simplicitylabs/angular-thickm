@@ -227,9 +227,13 @@ describe('ThickModel', function() {
       });
 
       it('returns only changed fields if not isNew', function() {
-        var model = new ThickModel({id: 1, a: 1, b: 2});
+        var model = new ThickModel({id: 1, a: 1, b: 2, c: { d: 1}});
         model.a = 42;
         expect(Object.keys(model.transformItemRequest()).length).toBe(1);
+        model.c = {d: 1};
+        expect(Object.keys(model.transformItemRequest()).length).toBe(1);
+        model.c = {d: 2};
+        expect(Object.keys(model.transformItemRequest()).length).toBe(2);
       });
     });
 
