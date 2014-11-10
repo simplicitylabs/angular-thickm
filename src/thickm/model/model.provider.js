@@ -295,7 +295,7 @@ angular.module('thickm.model')
             self = this;
 
         Object.keys(this).forEach(function(key) {
-          if (self._original[key] !== self[key]) {
+          if (!angular.equals(self._original[key], self[key])) {
             diff[key] = self[key];
           }
         });
