@@ -41,6 +41,9 @@ angular.module('thickm.model')
     put: {
       'Content-Type': 'application/json'
     },
+    patch: {
+      'Content-Type': 'application/json'
+    },
     delete: {
       'Content-Type': 'application/json'
     }
@@ -81,6 +84,12 @@ angular.module('thickm.model')
        */
       function ThickModel(data) {
         angular.extend(this, data);
+
+        Object.defineProperty(this, '_original', {
+          enumerable: false,
+          writable: true
+        });
+        this.setOriginal();
       }
 
       // The base URL for the model, e.g. `/api/v1/`
@@ -183,7 +192,11 @@ angular.module('thickm.model')
        */
       /*jshint unused:false */
       ThickModel.prototype.transformItemRequest = function(headers) {
-        return this;
+        if (this.isNew()) {
+          return this;
+        }
+
+        return this.diff();
       };
 
       /**
@@ -276,6 +289,44 @@ angular.module('thickm.model')
 
       /**
        * @ngdoc method
+       * @name model.ThickModel.setOriginal
+       * @methodOf model.ThickModel
+       * @description
+       * Copies the model to the property `_original`, so that it can be
+       * compared at a later stage.
+       */
+      ThickModel.prototype.setOriginal = function() {
+        this._original = angular.copy(this);
+      };
+
+      /**
+       * @ngdoc method
+       * @name model.ThickModel.diff
+       * @methodOf model.ThickModel
+       * @description
+       * Return a diff compared to the property `_original`. Returns the whole
+       * object if `_original` is not set. Set `_original` with
+       * `.setOriginal()`.
+       */
+      ThickModel.prototype.diff = function() {
+        if (!angular.isObject(this._original)) {
+          return this;
+        }
+
+        var diff = {},
+            self = this;
+
+        Object.keys(this).forEach(function(key) {
+          if (self._original[key] !== self[key]) {
+            diff[key] = self[key];
+          }
+        });
+
+        return diff;
+      };
+
+      /**
+       * @ngdoc method
        * @name model.ThickModel.update
        * @methodOf model.ThickModel
        * @description
@@ -284,6 +335,9 @@ angular.module('thickm.model')
        * @param {Object} data Object with new data.
        */
       ThickModel.prototype.update = function(data) {
+        if (!data) {
+          data = {};
+        }
         angular.extend(this, data);
       };
 
@@ -309,14 +363,14 @@ angular.module('thickm.model')
 
         var config = {};
         config.headers = isNew ? angular.copy(provider.headers.post) :
-            angular.copy(provider.headers.put);
+            angular.copy(provider.headers.patch);
 
         var data = this.transformItemRequest(config.headers);
 
         if (this.isNew()) {
           promise = $http.post(this.getCollectionUrl(), data, config);
         } else {
-          promise = $http.put(this.getModelUrl(), data, config);
+          promise = $http.patch(this.getModelUrl(), data, config);
         }
 
         promise.then(function(response) {

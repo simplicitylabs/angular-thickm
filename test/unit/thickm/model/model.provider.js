@@ -220,6 +220,17 @@ describe('ThickModel', function() {
       it('returns an object', function() {
         expect(angular.isObject(r.transformItemRequest())).toEqual(true);
       });
+
+      it('returns all fields if isNew', function() {
+        var model = new ThickModel({a: 1, b: 2});
+        expect(Object.keys(model.transformItemRequest()).length).toBe(2);
+      });
+
+      it('returns only changed fields if not isNew', function() {
+        var model = new ThickModel({id: 1, a: 1, b: 2});
+        model.a = 42;
+        expect(Object.keys(model.transformItemRequest()).length).toBe(1);
+      });
     });
 
     describe('isNew', function() {
@@ -246,7 +257,7 @@ describe('ThickModel', function() {
         spyOn($http, 'post').andCallFake(function() {
           return $q.defer().promise;
         });
-        spyOn($http, 'put').andCallFake(function() {
+        spyOn($http, 'patch').andCallFake(function() {
           var deferred = $q.defer();
           deferred.resolve({property: 'fromserver'});
           return deferred.promise;
@@ -262,10 +273,10 @@ describe('ThickModel', function() {
         expect($http.post.calls[0].args[0]).toEqual(r.getCollectionUrl());
       });
 
-      it('PUTs to modelUrl if r is not new', function() {
+      it('PATCHes to modelUrl if r is not new', function() {
         r[r._primaryField] = 1;
         expect(r.save()).toBeSuccessErrorPromise();
-        expect($http.put.calls[0].args[0]).toEqual(r.getModelUrl());
+        expect($http.patch.calls[0].args[0]).toEqual(r.getModelUrl());
       });
 
       it('calls gets data/headers via transformItemRequest', function() {
@@ -282,11 +293,11 @@ describe('ThickModel', function() {
         expect($http.post.calls[0].args[2].headers['Content-Type']).toEqual('application/json');
       });
 
-      it('has application/json content type with PUT', function() {
+      it('has application/json content type with PATCH', function() {
         r[r._primaryField] = 1;
         r.save();
 
-        expect($http.put.calls[0].args[2].headers['Content-Type']).toEqual('application/json');
+        expect($http.patch.calls[0].args[2].headers['Content-Type']).toEqual('application/json');
       });
 
       it('updates r\'s data with data from server', function() {
@@ -507,14 +518,14 @@ describe('User use case', function() {
       var user, newUser;
 
       beforeEach(function() {
-        user = User.build(testData.knownUserData);
+        user = new User(testData.knownUserData);
         var newUserData = angular.copy(testData.knownUserData);
-        newUserData._id = undefined;
-        newUser = User.build(newUserData);
+        delete newUserData._id;
+        newUser = new User(newUserData);
       });
 
-      it('puts known user to users/:_id', function() {
-        $httpBackend.expectPUT(testData.knownUserUrl);
+      it('patches known user to users/:_id', function() {
+        $httpBackend.expectPATCH(testData.knownUserUrl);
         expect(user.save()).toBeSuccessErrorPromise();
         $httpBackend.flush();
       });
@@ -534,7 +545,7 @@ describe('User use case', function() {
       });
 
       it('transforms the object when saving old', function() {
-        $httpBackend.expectPUT(testData.knownUserUrl);
+        $httpBackend.expectPATCH(testData.knownUserUrl);
         spyOn(user, 'transformItemRequest');
         user.save();
         expect(user.transformItemRequest).toHaveBeenCalled();
