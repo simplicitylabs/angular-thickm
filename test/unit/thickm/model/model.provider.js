@@ -257,19 +257,33 @@ describe('ThickModel', function() {
     });
 
     describe('save', function() {
-      beforeEach(function() {
-        spyOn($http, 'post').andCallFake(function() {
-          return $q.defer().promise;
+      var $rootScope;
+      beforeEach(inject(function(_$rootScope_) {
+        $rootScope = _$rootScope_;
+        spyOn($http, 'post').andCallFake(function(url, data) {
+          var deferred = $q.defer();
+
+          if (data.invalid) {
+            deferred.reject({});
+          } else {
+            deferred.resolve({data: {property: 'fromserver'}});
+          }
+
+          return deferred.promise;
         });
         spyOn($http, 'patch').andCallFake(function() {
           var deferred = $q.defer();
-          deferred.resolve({property: 'fromserver'});
+          deferred.resolve({data: {property: 'fromserver'}});
           return deferred.promise;
         });
         spyOn(r, 'transformItemRequest').andCallFake(function(headers) {
           headers['Fake-Header'] = 'Value';
-          return {a: 'b'};
+          return r;
         });
+      }));
+
+      afterEach(function() {
+        $rootScope.$apply();
       });
 
       it('POSTs to collectionUrl if r is new', function() {
@@ -287,7 +301,6 @@ describe('ThickModel', function() {
         r.save();
 
         expect(r.transformItemRequest).toHaveBeenCalled();
-        expect($http.post.calls[0].args[1]).toEqual({a: 'b'});
         expect($http.post.calls[0].args[2].headers['Fake-Header']).toEqual('Value');
       });
 
@@ -315,6 +328,15 @@ describe('ThickModel', function() {
         r[r._primaryField] = 1;
         r.save().then(function() {
           expect(r instanceof ThickModel).toEqual(true);
+        });
+      });
+
+      it('error if request fails', function() {
+        r.invalid = true;
+        this.error = function(){};
+        spyOn(this, 'error');
+        r.save().error(this.error).then(function() {
+          expect(this.error).toHaveBeenCalled();
         });
       });
     });
