@@ -140,6 +140,17 @@ describe('ThickModel', function() {
       ThickModel.get(1, {a: 'b'});
       expect(ThickModel.getUrl).toHaveBeenCalledWith('/items/1', {a: 'b'});
     });
+
+    it('rejects promise on HTTP errors', inject(function($httpBackend) {
+      $httpBackend.whenGET('/items/a').respond(401, '');
+      $httpBackend.expectGET('/items/a');
+      var error = false;
+      ThickModel.get('a').error(function() {
+        error = true;
+      });
+      $httpBackend.flush();
+      expect(error).toBe(true);
+    }));
   });
 
   describe('extend', function() {
